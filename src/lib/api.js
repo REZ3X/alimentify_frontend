@@ -118,6 +118,33 @@ class ApiClient {
 
         return data;
     }
+
+    async getNutritionInfo(query) {
+        const params = new URLSearchParams({ query });
+        return this.request(`/nutrition-info?${params.toString()}`);
+    }
+
+    async searchFoods(query, options = {}) {
+        const params = new URLSearchParams({
+            query,
+            ...(options.pageNumber && { pageNumber: options.pageNumber }),
+            ...(options.pageSize && { pageSize: options.pageSize }),
+            ...(options.dataType && { dataType: options.dataType }),
+        });
+
+        return this.request(`/food-wiki/search?${params.toString()}`);
+    }
+
+    async getFoodDetails(fdcId) {
+        return this.request(`/food-wiki/${fdcId}`);
+    }
+
+    async getFoods(fdcIds) {
+        return this.request('/food-wiki/foods', {
+            method: 'POST',
+            body: JSON.stringify({ fdcIds }),
+        });
+    }
 }
 
 export const api = new ApiClient();
