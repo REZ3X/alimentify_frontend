@@ -70,6 +70,54 @@ class ApiClient {
     async verifyEmail(token) {
         return this.request(`/auth/verify-email?token=${token}`);
     }
+
+    async analyzeFoodImage(imageFile) {
+        const formData = new FormData();
+        formData.append('image', imageFile);
+
+        const token = this.getToken();
+        const headers = {};
+        if (token) {
+            headers['Authorization'] = `Bearer ${token}`;
+        }
+
+        const response = await fetch(`${this.baseUrl}/nutrition/analyze`, {
+            method: 'POST',
+            headers,
+            body: formData,
+        });
+
+        const data = await response.json();
+        if (!response.ok) {
+            throw new Error(data.error || 'Failed to analyze food image');
+        }
+
+        return data;
+    }
+
+    async quickFoodCheck(imageFile) {
+        const formData = new FormData();
+        formData.append('image', imageFile);
+
+        const token = this.getToken();
+        const headers = {};
+        if (token) {
+            headers['Authorization'] = `Bearer ${token}`;
+        }
+
+        const response = await fetch(`${this.baseUrl}/nutrition/quick-check`, {
+            method: 'POST',
+            headers,
+            body: formData,
+        });
+
+        const data = await response.json();
+        if (!response.ok) {
+            throw new Error(data.error || 'Failed to check food');
+        }
+
+        return data;
+    }
 }
 
 export const api = new ApiClient();

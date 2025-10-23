@@ -33,7 +33,7 @@ export function AuthProvider({ children }) {
     const login = (token, userData) => {
         api.setToken(token);
         setUser(userData);
-        router.push('/');
+        router.push('/my');
     };
 
     const logout = async () => {
