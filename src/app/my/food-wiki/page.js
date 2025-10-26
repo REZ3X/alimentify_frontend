@@ -19,8 +19,34 @@ export default function FoodWikiPage() {
     useEffect(() => {
         if (!authLoading && !user) {
             router.push('/auth/login');
+        } else if (user && !searchResults && !loading) {
+
+            loadPopularFoods();
         }
     }, [user, authLoading, router]);
+
+    const loadPopularFoods = async () => {
+        const popularSearches = ['chicken', 'milk', 'bread', 'cheese', 'yogurt', 'beef'];
+        const randomSearch = popularSearches[Math.floor(Math.random() * popularSearches.length)];
+
+        setLoading(true);
+        setError(null);
+
+        try {
+            const response = await api.searchFoods(randomSearch, {
+                pageNumber: 1,
+                pageSize: pageSize,
+            });
+            setSearchResults(response.data);
+            setSearchQuery(randomSearch);
+            setCurrentPage(1);
+        } catch (err) {
+            console.error('Failed to load popular foods:', err);
+
+        } finally {
+            setLoading(false);
+        }
+    };
 
     if (authLoading) {
         return (
@@ -110,21 +136,42 @@ export default function FoodWikiPage() {
 
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 <div className="bg-white rounded-xl shadow-md p-6 mb-8">
-                    <form onSubmit={handleSearch} className="flex gap-4">
-                        <input
-                            type="text"
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                            placeholder="Search for food (e.g., apple, chicken breast, milk)"
-                            className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                        />
-                        <button
-                            type="submit"
-                            disabled={loading || !searchQuery.trim()}
-                            className="px-8 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors font-medium"
-                        >
-                            {loading ? 'Searching...' : 'Search'}
-                        </button>
+                    <form onSubmit={handleSearch} className="space-y-4">
+                        <div className="flex gap-4">
+                            <input
+                                type="text"
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                placeholder="Search for food (e.g., apple, chicken breast, milk)"
+                                className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                            />
+                            <button
+                                type="submit"
+                                disabled={loading || !searchQuery.trim()}
+                                className="px-8 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors font-medium"
+                            >
+                                {loading ? 'Searching...' : 'Search'}
+                            </button>
+                        </div>
+
+                                                <div>
+                            <p className="text-sm text-gray-600 mb-2">Popular searches:</p>
+                            <div className="flex flex-wrap gap-2">
+                                {['chicken', 'milk', 'bread', 'cheese', 'yogurt', 'beef', 'apple', 'banana'].map((suggestion, index) => (
+                                    <button
+                                        key={index}
+                                        type="button"
+                                        onClick={() => {
+                                            setSearchQuery(suggestion);
+                                            handleSearch({ preventDefault: () => { }, target: { value: suggestion } });
+                                        }}
+                                        className="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded-full hover:bg-green-100 hover:text-green-700 transition-colors"
+                                    >
+                                        {suggestion}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
                     </form>
                 </div>
 

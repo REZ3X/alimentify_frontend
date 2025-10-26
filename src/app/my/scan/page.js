@@ -24,6 +24,17 @@ export default function FoodScannerPage() {
     const [availableCameras, setAvailableCameras] = useState([]);
     const [selectedDeviceId, setSelectedDeviceId] = useState(null);
     const [showCameraSelect, setShowCameraSelect] = useState(false);
+    const [showLogModal, setShowLogModal] = useState(false);
+    const [logFormData, setLogFormData] = useState({
+        meal_type: 'breakfast',
+        food_name: '',
+        calories: '',
+        protein_g: '',
+        carbs_g: '',
+        fat_g: '',
+        serving_size: '',
+        notes: '',
+    });
 
     useEffect(() => {
         if (!loading && !user) {
@@ -91,8 +102,8 @@ export default function FoodScannerPage() {
             if (deviceId) {
                 attempts.push(
                     { video: { deviceId: { ideal: deviceId } } },
-                    { video: { deviceId: deviceId } }, 
-                    { video: true } 
+                    { video: { deviceId: deviceId } },
+                    { video: true }
                 );
             } else if (isMobile) {
                 attempts.push(
@@ -110,7 +121,7 @@ export default function FoodScannerPage() {
                     console.log(`Camera attempt ${i + 1}/${attempts.length}:`, attempts[i]);
                     mediaStream = await navigator.mediaDevices.getUserMedia(attempts[i]);
                     console.log('Camera started successfully!');
-                    break; 
+                    break;
                 } catch (err) {
                     console.log(`Attempt ${i + 1} failed:`, err.name, err.message);
                     lastError = err;
@@ -250,6 +261,50 @@ export default function FoodScannerPage() {
         setResult(null);
         setError(null);
         stopCamera();
+    };
+
+    const openLogModal = () => {
+
+        setLogFormData({
+            meal_type: 'breakfast',
+            food_name: '',
+            calories: '',
+            protein_g: '',
+            carbs_g: '',
+            fat_g: '',
+            serving_size: '',
+            notes: result?.analysis || '',
+        });
+        setShowLogModal(true);
+    };
+
+    const handleLogMeal = async (e) => {
+        e.preventDefault();
+
+        try {
+            const mealData = {
+                meal_type: logFormData.meal_type,
+                food_name: logFormData.food_name,
+                calories: parseFloat(logFormData.calories) || 0,
+                protein_g: parseFloat(logFormData.protein_g) || 0,
+                carbs_g: parseFloat(logFormData.carbs_g) || 0,
+                fat_g: parseFloat(logFormData.fat_g) || 0,
+                serving_size: logFormData.serving_size,
+                notes: logFormData.notes,
+            };
+
+            await api.logMeal(mealData);
+            setShowLogModal(false);
+
+            const successDiv = document.createElement('div');
+            successDiv.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50';
+            successDiv.textContent = '✓ Meal logged successfully!';
+            document.body.appendChild(successDiv);
+            setTimeout(() => successDiv.remove(), 3000);
+        } catch (err) {
+            console.error('Error logging meal:', err);
+            setError(err.message || 'Failed to log meal');
+        }
     };
 
     if (loading) {
@@ -491,18 +546,182 @@ export default function FoodScannerPage() {
                                 </div>
                             </div>
 
-                            <button
-                                onClick={resetScanner}
-                                className="w-full px-6 py-3.5 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg font-semibold hover:from-indigo-700 hover:to-purple-700 active:scale-95 transition-all shadow-md hover:shadow-lg text-base touch-manipulation"
-                            >
-                                🔄 Scan Another Food
-                            </button>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <button
+                                    onClick={openLogModal}
+                                    className="w-full px-6 py-3.5 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 active:scale-95 transition-all shadow-md hover:shadow-lg text-base touch-manipulation flex items-center justify-center gap-2"
+                                >
+                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                                    </svg>
+                                    Log This Meal
+                                </button>
+                                <button
+                                    onClick={resetScanner}
+                                    className="w-full px-6 py-3.5 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg font-semibold hover:from-indigo-700 hover:to-purple-700 active:scale-95 transition-all shadow-md hover:shadow-lg text-base touch-manipulation"
+                                >
+                                    🔄 Scan Another Food
+                                </button>
+                            </div>
                         </div>
                     )}
                 </div>
 
                 <canvas ref={canvasRef} className="hidden" />
             </main>
+
+                        {showLogModal && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+                    <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+                        <div className="p-6">
+                            <div className="flex justify-between items-center mb-6">
+                                <h2 className="text-2xl font-bold text-gray-800">Log Scanned Meal</h2>
+                                <button
+                                    onClick={() => setShowLogModal(false)}
+                                    className="text-gray-500 hover:text-gray-700 text-2xl"
+                                >
+                                    ×
+                                </button>
+                            </div>
+
+                            <form onSubmit={handleLogMeal} className="space-y-4">
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                                        Meal Type *
+                                    </label>
+                                    <select
+                                        value={logFormData.meal_type}
+                                        onChange={(e) => setLogFormData({ ...logFormData, meal_type: e.target.value })}
+                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                                        required
+                                    >
+                                        <option value="breakfast">Breakfast</option>
+                                        <option value="lunch">Lunch</option>
+                                        <option value="dinner">Dinner</option>
+                                        <option value="snack">Snack</option>
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                                        Food Name *
+                                    </label>
+                                    <input
+                                        type="text"
+                                        value={logFormData.food_name}
+                                        onChange={(e) => setLogFormData({ ...logFormData, food_name: e.target.value })}
+                                        placeholder="e.g., Grilled Chicken Breast"
+                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                                        required
+                                    />
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                                            Calories *
+                                        </label>
+                                        <input
+                                            type="number"
+                                            value={logFormData.calories}
+                                            onChange={(e) => setLogFormData({ ...logFormData, calories: e.target.value })}
+                                            step="0.1"
+                                            min="0"
+                                            placeholder="0"
+                                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                                            required
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                                            Protein (g)
+                                        </label>
+                                        <input
+                                            type="number"
+                                            value={logFormData.protein_g}
+                                            onChange={(e) => setLogFormData({ ...logFormData, protein_g: e.target.value })}
+                                            step="0.1"
+                                            min="0"
+                                            placeholder="0"
+                                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                                            Carbs (g)
+                                        </label>
+                                        <input
+                                            type="number"
+                                            value={logFormData.carbs_g}
+                                            onChange={(e) => setLogFormData({ ...logFormData, carbs_g: e.target.value })}
+                                            step="0.1"
+                                            min="0"
+                                            placeholder="0"
+                                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                                            Fat (g)
+                                        </label>
+                                        <input
+                                            type="number"
+                                            value={logFormData.fat_g}
+                                            onChange={(e) => setLogFormData({ ...logFormData, fat_g: e.target.value })}
+                                            step="0.1"
+                                            min="0"
+                                            placeholder="0"
+                                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                                        />
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                                        Serving Size
+                                    </label>
+                                    <input
+                                        type="text"
+                                        value={logFormData.serving_size}
+                                        onChange={(e) => setLogFormData({ ...logFormData, serving_size: e.target.value })}
+                                        placeholder="e.g., 1 cup, 100g, 2 slices"
+                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                                    />
+                                </div>
+
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                                        Notes (AI Analysis)
+                                    </label>
+                                    <textarea
+                                        value={logFormData.notes}
+                                        onChange={(e) => setLogFormData({ ...logFormData, notes: e.target.value })}
+                                        rows="4"
+                                        placeholder="AI analysis will appear here..."
+                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent text-sm"
+                                    ></textarea>
+                                </div>
+
+                                <div className="flex gap-4 pt-4">
+                                    <button
+                                        type="submit"
+                                        className="flex-1 px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium"
+                                    >
+                                        Log Meal
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowLogModal(false)}
+                                        className="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors font-medium"
+                                    >
+                                        Cancel
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

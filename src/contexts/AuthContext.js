@@ -24,7 +24,10 @@ export function AuthProvider({ children }) {
             }
         } catch (error) {
             console.error('Auth check failed:', error);
-            api.removeToken();
+
+            if (error.message && error.message.includes('401')) {
+                api.removeToken();
+            }
         } finally {
             setLoading(false);
         }

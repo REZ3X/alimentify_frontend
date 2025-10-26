@@ -42,7 +42,24 @@ class ApiClient {
 
         try {
             const response = await fetch(`${this.baseUrl}${endpoint}`, config);
-            const data = await response.json();
+
+            const text = await response.text();
+
+            console.log('API Response:', {
+                endpoint,
+                status: response.status,
+                statusText: response.statusText,
+                textLength: text.length,
+                textPreview: text.substring(0, 200)
+            });
+
+            let data;
+            try {
+                data = JSON.parse(text);
+            } catch (parseError) {
+                console.error('Failed to parse JSON response:', text);
+                throw new Error(`Server returned invalid JSON (${response.status} ${response.statusText}): ${text.substring(0, 100)}`);
+            }
 
             if (!response.ok) {
                 throw new Error(data.error || 'Something went wrong');
@@ -50,6 +67,7 @@ class ApiClient {
 
             return data;
         } catch (error) {
+            console.error('API request failed:', error);
             throw error;
         }
     }
@@ -95,6 +113,13 @@ class ApiClient {
         return data;
     }
 
+    async analyzeFoodText(foodDescription) {
+        return this.request('/nutrition/analyze-text', {
+            method: 'POST',
+            body: JSON.stringify({ food_description: foodDescription }),
+        });
+    }
+
     async quickFoodCheck(imageFile) {
         const formData = new FormData();
         formData.append('image', imageFile);
@@ -124,6 +149,10 @@ class ApiClient {
         return this.request(`/nutrition-info?${params.toString()}`);
     }
 
+    async searchNutrition(query) {
+        return this.getNutritionInfo(query);
+    }
+
     async searchFoods(query, options = {}) {
         const params = new URLSearchParams({
             query,
@@ -143,6 +172,64 @@ class ApiClient {
         return this.request('/food-wiki/foods', {
             method: 'POST',
             body: JSON.stringify({ fdcIds }),
+        });
+    }
+
+    async searchRecipes(query) {
+        const params = new URLSearchParams({ query });
+        return this.request(`/recipes/search?${params.toString()}`);
+    }
+
+    async getRecipeById(mealId) {
+        return this.request(`/recipes/${mealId}`);
+    }
+
+    async getRandomRecipes(count = 6) {
+        const params = new URLSearchParams({ count: count.toString() });
+        return this.request(`/recipes/random?${params.toString()}`);
+    }
+
+    async filterRecipesByCategory(category) {
+        return this.request(`/recipes/category/${category}`);
+    }
+
+    async filterRecipesByArea(area) {
+        return this.request(`/recipes/area/${area}`);
+    }
+
+    async createHealthProfile(profileData) {
+        return this.request('/health/profile', {
+            method: 'POST',
+            body: JSON.stringify(profileData),
+        });
+    }
+
+    async getHealthProfile() {
+        return this.request('/health/profile');
+    }
+
+    async logMeal(mealData) {
+        return this.request('/meals/log', {
+            method: 'POST',
+            body: JSON.stringify(mealData),
+        });
+    }
+
+    async getDailyMeals(date) {
+        const params = date ? new URLSearchParams({ date }) : '';
+        return this.request(`/meals/daily${params ? '?' + params.toString() : ''}`);
+    }
+
+    async updateMeal(mealId, mealData) {
+        return this.request(`/meals/${mealId}`, {
+            method: 'PUT',
+            body: JSON.stringify(mealData),
+        });
+    }
+
+    async deleteMeal(mealId) {
+        return this.request(`/meals/${mealId}`, {
+            method: 'DELETE',
         });
     }
 }

@@ -11,6 +11,8 @@ export default function DashboardPage() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const [authenticating, setAuthenticating] = useState(false);
+    const [healthProfile, setHealthProfile] = useState(null);
+    const [loadingProfile, setLoadingProfile] = useState(true);
 
     useEffect(() => {
         const handleOAuthToken = async () => {
@@ -38,8 +40,30 @@ export default function DashboardPage() {
     useEffect(() => {
         if (!loading && !user && !searchParams.get('token')) {
             router.push('/auth/login');
+        } else if (!loading && user && !user.has_completed_health_survey) {
+
+            router.push('/my/health-survey');
         }
     }, [user, loading, router, searchParams]);
+
+    useEffect(() => {
+        const fetchHealthProfile = async () => {
+            if (user && user.has_completed_health_survey) {
+                try {
+                    const response = await api.getHealthProfile();
+                    setHealthProfile(response.profile);
+                } catch (error) {
+                    console.error('Failed to fetch health profile:', error);
+                } finally {
+                    setLoadingProfile(false);
+                }
+            } else {
+                setLoadingProfile(false);
+            }
+        };
+
+        fetchHealthProfile();
+    }, [user]);
 
     if (loading || authenticating) {
         return (
@@ -110,6 +134,24 @@ export default function DashboardPage() {
                                     </svg>
                                     Profile Settings
                                 </a>
+                                <a
+                                    href="/my/profile-edit"
+                                    className="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                                >
+                                    <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                    </svg>
+                                    Edit Health Profile
+                                </a>
+                                <a
+                                    href="/my/notifications"
+                                    className="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                                >
+                                    <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                                    </svg>
+                                    Notifications
+                                </a>
                                 <button
                                     onClick={logout}
                                     className="w-full flex items-center gap-3 px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
@@ -146,6 +188,93 @@ export default function DashboardPage() {
                                 <p className="text-yellow-800">
                                     We've sent a verification link to <strong>{user.gmail}</strong>.
                                     Please check your inbox and click the link to verify your email address.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                                {healthProfile && (
+                    <div className="mb-8">
+                        <div className="flex justify-between items-center mb-4">
+                            <h2 className="text-2xl font-bold text-gray-900">Your Health Stats</h2>
+                            <Link
+                                href="/my/profile-edit"
+                                className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 transition-colors shadow-sm"
+                            >
+                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                </svg>
+                                Edit Profile
+                            </Link>
+                        </div>
+
+                                                <div className="bg-white rounded-xl shadow-lg p-6 mb-6">
+                            <h3 className="text-lg font-semibold text-gray-900 mb-4">📊 Daily Targets</h3>
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                <div className="text-center p-4 bg-gradient-to-br from-orange-50 to-orange-100 rounded-lg">
+                                    <p className="text-xs text-gray-600 mb-1">Calories</p>
+                                    <p className="text-2xl font-bold text-orange-600">{Math.round(healthProfile.daily_calories)}</p>
+                                    <p className="text-xs text-gray-500">kcal/day</p>
+                                </div>
+                                <div className="text-center p-4 bg-gradient-to-br from-red-50 to-red-100 rounded-lg">
+                                    <p className="text-xs text-gray-600 mb-1">Protein</p>
+                                    <p className="text-2xl font-bold text-red-600">{Math.round(healthProfile.daily_protein_g)}</p>
+                                    <p className="text-xs text-gray-500">grams/day</p>
+                                </div>
+                                <div className="text-center p-4 bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg">
+                                    <p className="text-xs text-gray-600 mb-1">Carbs</p>
+                                    <p className="text-2xl font-bold text-blue-600">{Math.round(healthProfile.daily_carbs_g)}</p>
+                                    <p className="text-xs text-gray-500">grams/day</p>
+                                </div>
+                                <div className="text-center p-4 bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-lg">
+                                    <p className="text-xs text-gray-600 mb-1">Fat</p>
+                                    <p className="text-2xl font-bold text-yellow-600">{Math.round(healthProfile.daily_fat_g)}</p>
+                                    <p className="text-xs text-gray-500">grams/day</p>
+                                </div>
+                            </div>
+                        </div>
+
+                                                <div className="grid md:grid-cols-3 gap-6 mb-6">
+                            <div className="bg-white rounded-xl shadow p-6">
+                                <div className="flex items-center justify-between mb-2">
+                                    <h3 className="text-sm font-medium text-gray-600">BMI</h3>
+                                    <span className={`px-3 py-1 rounded-full text-xs font-semibold ${healthProfile.bmi_category === 'Normal' ? 'bg-green-100 text-green-800' :
+                                        healthProfile.bmi_category === 'Underweight' ? 'bg-blue-100 text-blue-800' :
+                                            healthProfile.bmi_category === 'Overweight' ? 'bg-yellow-100 text-yellow-800' :
+                                                'bg-red-100 text-red-800'
+                                        }`}>
+                                        {healthProfile.bmi_category}
+                                    </span>
+                                </div>
+                                <p className="text-3xl font-bold text-gray-900">{healthProfile.bmi.toFixed(1)}</p>
+                                <p className="text-sm text-gray-500 mt-1">Body Mass Index</p>
+                            </div>
+
+                            <div className="bg-white rounded-xl shadow p-6">
+                                <h3 className="text-sm font-medium text-gray-600 mb-2">BMR</h3>
+                                <p className="text-3xl font-bold text-gray-900">{Math.round(healthProfile.bmr)}</p>
+                                <p className="text-sm text-gray-500 mt-1">kcal/day base</p>
+                            </div>
+
+                            <div className="bg-white rounded-xl shadow p-6">
+                                <h3 className="text-sm font-medium text-gray-600 mb-2">TDEE</h3>
+                                <p className="text-3xl font-bold text-gray-900">{Math.round(healthProfile.tdee)}</p>
+                                <p className="text-sm text-gray-500 mt-1">kcal/day total</p>
+                            </div>
+                        </div>
+
+                                                <div className="grid md:grid-cols-2 gap-6">
+                            <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-6">
+                                <h3 className="text-sm font-medium text-gray-700 mb-2">🎯 Your Goal</h3>
+                                <p className="text-xl font-bold text-purple-900 capitalize">
+                                    {healthProfile.goal.replace('_', ' ')}
+                                </p>
+                            </div>
+                            <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-6">
+                                <h3 className="text-sm font-medium text-gray-700 mb-2">🏃 Activity Level</h3>
+                                <p className="text-xl font-bold text-green-900 capitalize">
+                                    {healthProfile.activity_level.replace('_', ' ')}
                                 </p>
                             </div>
                         </div>
@@ -190,7 +319,20 @@ export default function DashboardPage() {
 
                 <div className="bg-white rounded-xl shadow p-8">
                     <h3 className="text-2xl font-bold text-gray-900 mb-6">Quick Actions</h3>
-                    <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-6">
+                        <Link
+                            href="/my/meals"
+                            className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-green-500 hover:bg-green-50 transition-all cursor-pointer group"
+                        >
+                            <div className="w-16 h-16 bg-green-100 group-hover:bg-green-200 rounded-full flex items-center justify-center mx-auto mb-4 transition-colors">
+                                <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                                </svg>
+                            </div>
+                            <h4 className="text-lg font-semibold text-gray-900 mb-2">Track Meals</h4>
+                            <p className="text-gray-600 text-sm">Log your daily intake</p>
+                        </Link>
+
                         <Link
                             href="/my/scan"
                             className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-indigo-500 hover:bg-indigo-50 transition-all cursor-pointer group"
@@ -219,27 +361,43 @@ export default function DashboardPage() {
                         </Link>
 
                         <Link
+                            href="/my/recipes"
+                            className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-orange-500 hover:bg-orange-50 transition-all cursor-pointer group"
+                        >
+                            <div className="w-16 h-16 bg-orange-100 group-hover:bg-orange-200 rounded-full flex items-center justify-center mx-auto mb-4 transition-colors">
+                                <svg className="w-8 h-8 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                                </svg>
+                            </div>
+                            <h4 className="text-lg font-semibold text-gray-900 mb-2">Recipes</h4>
+                            <p className="text-gray-600 text-sm">Healthy meal ideas</p>
+                        </Link>
+
+                        <Link
                             href="/my/food-wiki"
                             className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-blue-500 hover:bg-blue-50 transition-all cursor-pointer group"
                         >
                             <div className="w-16 h-16 bg-blue-100 group-hover:bg-blue-200 rounded-full flex items-center justify-center mx-auto mb-4 transition-colors">
                                 <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
                                 </svg>
                             </div>
                             <h4 className="text-lg font-semibold text-gray-900 mb-2">Food Wiki</h4>
                             <p className="text-gray-600 text-sm">USDA database (US)</p>
                         </Link>
 
-                        <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-purple-500 hover:bg-purple-50 transition-all cursor-pointer group">
+                        <Link
+                            href="/my/progress"
+                            className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-purple-500 hover:bg-purple-50 transition-all cursor-pointer group"
+                        >
                             <div className="w-16 h-16 bg-purple-100 group-hover:bg-purple-200 rounded-full flex items-center justify-center mx-auto mb-4 transition-colors">
                                 <svg className="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                                 </svg>
                             </div>
                             <h4 className="text-lg font-semibold text-gray-900 mb-2">View Progress</h4>
-                            <p className="text-gray-600 text-sm">See your nutrition statistics</p>
-                        </div>
+                            <p className="text-gray-600 text-sm">Charts & analytics</p>
+                        </Link>
                     </div>
                 </div>
             </main>
