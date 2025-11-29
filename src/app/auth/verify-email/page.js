@@ -25,9 +25,21 @@ export default function VerifyEmailPage() {
                 setStatus('success');
                 setMessage(response.message || 'Email verified successfully!');
 
-                setTimeout(() => {
-                    router.push('/auth/login');
-                }, 3000);
+                if (response.token && response.user) {
+                    api.setToken(response.token);
+
+                    if (typeof window !== 'undefined') {
+                        localStorage.setItem('user', JSON.stringify(response.user));
+                    }
+
+                    setTimeout(() => {
+                        window.location.href = '/';
+                    }, 2000);
+                } else {
+                    setTimeout(() => {
+                        router.push('/auth/login');
+                    }, 3000);
+                }
             } catch (err) {
                 setStatus('error');
                 setMessage(err.message || 'Failed to verify email');
@@ -57,7 +69,7 @@ export default function VerifyEmailPage() {
                         </div>
                         <h2 className="text-2xl font-bold text-gray-900 mb-2">Email Verified!</h2>
                         <p className="text-gray-600 mb-4">{message}</p>
-                        <p className="text-sm text-gray-500">Redirecting to login...</p>
+                        <p className="text-sm text-gray-500">Logging you in...</p>
                     </>
                 )}
 

@@ -264,21 +264,157 @@ export default function FoodScannerPage() {
     };
 
     const openLogModal = () => {
+        console.log('Opening log modal with result:', result);
+
+        let foodName = '';
+        let calories = '';
+        let protein = '';
+        let carbs = '';
+        let fat = '';
+        let servingSize = '';
+        let notes = '';
+
+        let parsedData = result;
+
+        if (result) {
+            if (result.analysis && typeof result.analysis === 'string') {
+                try {
+                    let cleanedAnalysis = result.analysis.trim();
+
+                    cleanedAnalysis = cleanedAnalysis.replace(/^```json?\s*/i, '');
+                    cleanedAnalysis = cleanedAnalysis.replace(/```\s*$/, '');
+                    cleanedAnalysis = cleanedAnalysis.trim();
+
+                    parsedData = JSON.parse(cleanedAnalysis);
+                    console.log('Parsed analysis:', parsedData);
+                } catch (e) {
+                    console.log('Analysis is not JSON, trying to extract JSON from text:', e);
+
+                    const jsonMatch = result.analysis.match(/\{[\s\S]*\}/);
+                    if (jsonMatch) {
+                        try {
+                            parsedData = JSON.parse(jsonMatch[0]);
+                            console.log('Extracted JSON from text:', parsedData);
+                        } catch (e2) {
+                            console.log('Failed to extract JSON, using raw result');
+                            parsedData = result;
+                        }
+                    } else {
+                        parsedData = result;
+                    }
+                }
+            }
+
+            if (parsedData.food_name) {
+                foodName = parsedData.food_name;
+            }
+
+            if (parsedData.serving_size) {
+                servingSize = parsedData.serving_size;
+            }
+
+            if (parsedData.calories) {
+                const calStr = String(parsedData.calories);
+                const calMatch = calStr.match(/(\d+)/);
+                if (calMatch) {
+                    calories = calMatch[1];
+                }
+            }
+
+            if (parsedData.macronutrients) {
+                const macros = parsedData.macronutrients;
+
+                if (macros.protein) {
+                    const proteinMatch = String(macros.protein).match(/(\d+)/);
+                    if (proteinMatch) {
+                        protein = proteinMatch[1];
+                    }
+                }
+
+                if (macros.carbohydrates) {
+                    const carbsMatch = String(macros.carbohydrates).match(/(\d+)/);
+                    if (carbsMatch) {
+                        carbs = carbsMatch[1];
+                    }
+                }
+
+                if (macros.fat) {
+                    const fatMatch = String(macros.fat).match(/(\d+)/);
+                    if (fatMatch) {
+                        fat = fatMatch[1];
+                    }
+                }
+            }
+
+            notes = '';
+            if (parsedData.health_notes) {
+                notes += `Health Notes: ${parsedData.health_notes}\n\n`;
+            }
+            if (parsedData.recommendations) {
+                notes += `Recommendations: ${parsedData.recommendations}`;
+            }
+
+            if ((!foodName || !calories) && typeof result.analysis === 'string' && parsedData === result) {
+                const analysis = result.analysis;
+
+                if (!foodName) {
+                    const foodMatch = analysis.match(/(?:Food|Item|Dish)[:\s]+([^\n]+)/i);
+                    if (foodMatch) {
+                        foodName = foodMatch[1].trim();
+                    }
+                }
+
+                if (!calories) {
+                    const calMatch = analysis.match(/(\d+(?:\.\d+)?)\s*(?:kcal|calories|cal)/i);
+                    if (calMatch) {
+                        calories = calMatch[1];
+                    }
+                }
+
+                if (!protein) {
+                    const proteinMatch = analysis.match(/(?:protein)[:\s]+(\d+(?:\.\d+)?)\s*g/i);
+                    if (proteinMatch) {
+                        protein = proteinMatch[1];
+                    }
+                }
+
+                if (!carbs) {
+                    const carbsMatch = analysis.match(/(?:carb|carbohydrate)[s]?[:\s]+(\d+(?:\.\d+)?)\s*g/i);
+                    if (carbsMatch) {
+                        carbs = carbsMatch[1];
+                    }
+                }
+
+                if (!fat) {
+                    const fatMatch = analysis.match(/(?:fat)[:\s]+(\d+(?:\.\d+)?)\s*g/i);
+                    if (fatMatch) {
+                        fat = fatMatch[1];
+                    }
+                }
+
+                if (!servingSize) {
+                    const servingMatch = analysis.match(/(?:serving|portion)[:\s]+([^\n]+)/i);
+                    if (servingMatch) {
+                        servingSize = servingMatch[1].trim();
+                    }
+                }
+            }
+        }
+
+        console.log('Extracted values:', { foodName, calories, protein, carbs, fat, servingSize });
 
         setLogFormData({
             meal_type: 'breakfast',
-            food_name: '',
-            calories: '',
-            protein_g: '',
-            carbs_g: '',
-            fat_g: '',
-            serving_size: '',
-            notes: result?.analysis || '',
+            food_name: foodName,
+            calories: calories,
+            protein_g: protein,
+            carbs_g: carbs,
+            fat_g: fat,
+            serving_size: servingSize,
+            notes: notes || result?.analysis || '',
         });
         setShowLogModal(true);
-    };
-
-    const handleLogMeal = async (e) => {
+    }; const handleLogMeal = async (e) => {
         e.preventDefault();
 
         try {
@@ -570,7 +706,7 @@ export default function FoodScannerPage() {
                 <canvas ref={canvasRef} className="hidden" />
             </main>
 
-                        {showLogModal && (
+            {showLogModal && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
                     <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
                         <div className="p-6">

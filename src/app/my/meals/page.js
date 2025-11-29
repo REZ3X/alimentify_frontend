@@ -68,34 +68,47 @@ export default function MealsPage() {
         setError(null);
         try {
             const data = await api.getDailyMeals(selectedDate);
-            console.log('Daily meals response:', data);             setMeals(data.meals || []);
+            console.log('Daily meals response:', data);
+            console.log('Daily totals from backend:', data.daily_totals);
+            setMeals(data.meals || []);
 
-            if (data.daily_totals && data.daily_totals.target) {
-                setDailyTotals(data.daily_totals);
-            } else if (healthProfile) {
+            if (data.daily_totals) {
+                const totals = data.daily_totals;
+                console.log('Setting daily totals:', {
+                    consumed: {
+                        calories: totals.total_calories,
+                        protein_g: totals.total_protein_g,
+                        carbs_g: totals.total_carbs_g,
+                        fat_g: totals.total_fat_g,
+                    },
+                    target: {
+                        calories: totals.target_calories,
+                        protein_g: totals.target_protein_g,
+                        carbs_g: totals.target_carbs_g,
+                        fat_g: totals.target_fat_g,
+                    }
+                });
 
-                const consumed = (data.meals || []).reduce((acc, meal) => ({
-                    calories: acc.calories + (meal.calories || 0),
-                    protein_g: acc.protein_g + (meal.protein_g || 0),
-                    carbs_g: acc.carbs_g + (meal.carbs_g || 0),
-                    fat_g: acc.fat_g + (meal.fat_g || 0),
-                }), { calories: 0, protein_g: 0, carbs_g: 0, fat_g: 0 });
-
-                const target = {
-                    calories: healthProfile.daily_calories || 2000,
-                    protein_g: healthProfile.daily_protein_g || 150,
-                    carbs_g: healthProfile.daily_carbs_g || 250,
-                    fat_g: healthProfile.daily_fat_g || 65,
-                };
-
-                const remaining = {
-                    calories: target.calories - consumed.calories,
-                    protein_g: target.protein_g - consumed.protein_g,
-                    carbs_g: target.carbs_g - consumed.carbs_g,
-                    fat_g: target.fat_g - consumed.fat_g,
-                };
-
-                setDailyTotals({ consumed, target, remaining });
+                setDailyTotals({
+                    consumed: {
+                        calories: totals.total_calories || 0,
+                        protein_g: totals.total_protein_g || 0,
+                        carbs_g: totals.total_carbs_g || 0,
+                        fat_g: totals.total_fat_g || 0,
+                    },
+                    target: {
+                        calories: totals.target_calories || 2000,
+                        protein_g: totals.target_protein_g || 128,
+                        carbs_g: totals.target_carbs_g || 231,
+                        fat_g: totals.target_fat_g || 68,
+                    },
+                    remaining: {
+                        calories: totals.calories_remaining || 0,
+                        protein_g: totals.protein_remaining || 0,
+                        carbs_g: totals.carbs_remaining || 0,
+                        fat_g: totals.fat_remaining || 0,
+                    }
+                });
             }
         } catch (err) {
             console.error('Error fetching meals:', err);
@@ -193,7 +206,8 @@ export default function MealsPage() {
 
             setShowAddModal(false);
             resetForm();
-            fetchDailyMeals();         } catch (err) {
+            fetchDailyMeals();
+        } catch (err) {
             console.error('Error adding meal:', err);
             setError(err.message || 'Failed to add meal');
         }
@@ -221,7 +235,8 @@ export default function MealsPage() {
             setShowEditModal(false);
             setEditingMeal(null);
             resetForm();
-            fetchDailyMeals();         } catch (err) {
+            fetchDailyMeals();
+        } catch (err) {
             console.error('Error updating meal:', err);
             setError(err.message || 'Failed to update meal');
         }
@@ -248,7 +263,8 @@ export default function MealsPage() {
         setError(null);
         try {
             await api.deleteMeal(mealId);
-            fetchDailyMeals();         } catch (err) {
+            fetchDailyMeals();
+        } catch (err) {
             console.error('Error deleting meal:', err);
             setError(err.message || 'Failed to delete meal');
         }
@@ -285,7 +301,7 @@ export default function MealsPage() {
     return (
         <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-blue-50 p-6">
             <div className="max-w-6xl mx-auto">
-                                <div className="mb-8">
+                <div className="mb-8">
                     <h1 className="text-4xl font-bold text-gray-800 mb-2">📊 Meal Tracker</h1>
                     <p className="text-gray-600">Track your daily meals and nutrition</p>
                 </div>
@@ -296,7 +312,7 @@ export default function MealsPage() {
                     </div>
                 )}
 
-                                <div className="mb-6 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+                <div className="mb-6 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
                     <div>
                         <label htmlFor="date" className="block text-sm font-medium text-gray-700 mb-2">
                             Select Date
@@ -318,7 +334,7 @@ export default function MealsPage() {
                     </button>
                 </div>
 
-                                {!loading && (!user.has_completed_health_survey || !healthProfile) ? (
+                {!loading && (!user.has_completed_health_survey || !healthProfile) ? (
                     <div className="bg-yellow-50 border border-yellow-200 rounded-2xl p-6 mb-8">
                         <div className="flex items-center gap-3 mb-3">
                             <svg className="w-8 h-8 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -338,11 +354,11 @@ export default function MealsPage() {
                     </div>
                 ) : null}
 
-                                {dailyTotals && dailyTotals.consumed && dailyTotals.target && dailyTotals.remaining && (
+                {dailyTotals && dailyTotals.consumed && dailyTotals.target && dailyTotals.remaining && (
                     <div className="bg-white rounded-2xl shadow-lg p-6 mb-8">
                         <h2 className="text-2xl font-bold text-gray-800 mb-4">Daily Summary</h2>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                                                        <div className="space-y-2">
+                            <div className="space-y-2">
                                 <div className="flex justify-between items-center">
                                     <span className="text-sm font-medium text-gray-600">Calories</span>
                                     <span className="text-sm font-bold text-gray-800">
@@ -360,7 +376,7 @@ export default function MealsPage() {
                                 </p>
                             </div>
 
-                                                        <div className="space-y-2">
+                            <div className="space-y-2">
                                 <div className="flex justify-between items-center">
                                     <span className="text-sm font-medium text-gray-600">Protein</span>
                                     <span className="text-sm font-bold text-gray-800">
@@ -378,7 +394,7 @@ export default function MealsPage() {
                                 </p>
                             </div>
 
-                                                        <div className="space-y-2">
+                            <div className="space-y-2">
                                 <div className="flex justify-between items-center">
                                     <span className="text-sm font-medium text-gray-600">Carbs</span>
                                     <span className="text-sm font-bold text-gray-800">
@@ -396,7 +412,7 @@ export default function MealsPage() {
                                 </p>
                             </div>
 
-                                                        <div className="space-y-2">
+                            <div className="space-y-2">
                                 <div className="flex justify-between items-center">
                                     <span className="text-sm font-medium text-gray-600">Fat</span>
                                     <span className="text-sm font-bold text-gray-800">
@@ -417,7 +433,7 @@ export default function MealsPage() {
                     </div>
                 )}
 
-                                {loading ? (
+                {loading ? (
                     <div className="text-center py-12">
                         <div className="text-xl text-gray-600">Loading meals...</div>
                     </div>
@@ -478,7 +494,7 @@ export default function MealsPage() {
                     </div>
                 )}
 
-                                {showAddModal && (
+                {showAddModal && (
                     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
                         <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
                             <div className="p-6">
@@ -495,7 +511,7 @@ export default function MealsPage() {
                                     </button>
                                 </div>
 
-                                                                <div className="mb-6 bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200 rounded-lg p-4">
+                                <div className="mb-6 bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200 rounded-lg p-4">
                                     <div className="flex items-start gap-3">
                                         <svg className="w-6 h-6 text-blue-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -510,7 +526,7 @@ export default function MealsPage() {
                                 </div>
 
                                 <form onSubmit={handleAddMeal} className="space-y-4">
-                                                                        <div>
+                                    <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-2">
                                             Meal Type *
                                         </label>
@@ -528,7 +544,7 @@ export default function MealsPage() {
                                         </select>
                                     </div>
 
-                                                                        <div>
+                                    <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-2">
                                             What did you eat? *
                                         </label>
@@ -543,7 +559,7 @@ export default function MealsPage() {
                                         />
                                     </div>
 
-                                                                        <div>
+                                    <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-2">
                                             Portion/Serving (Optional)
                                         </label>
@@ -560,7 +576,7 @@ export default function MealsPage() {
                                         </p>
                                     </div>
 
-                                                                        {!formData.calories && !showManualEntry && (
+                                    {!formData.calories && !showManualEntry && (
                                         <button
                                             type="button"
                                             onClick={analyzeFood}
@@ -586,7 +602,7 @@ export default function MealsPage() {
                                         </button>
                                     )}
 
-                                                                        {!formData.calories && (
+                                    {!formData.calories && (
                                         <button
                                             type="button"
                                             onClick={() => setShowManualEntry(true)}
@@ -596,7 +612,7 @@ export default function MealsPage() {
                                         </button>
                                     )}
 
-                                                                        {(formData.calories || showManualEntry) && (
+                                    {(formData.calories || showManualEntry) && (
                                         <div className="space-y-4 pt-4 border-t border-gray-200">
                                             <div className="flex items-center justify-between mb-2">
                                                 <h3 className="text-lg font-semibold text-gray-800">
@@ -681,7 +697,7 @@ export default function MealsPage() {
                                                 </div>
                                             </div>
 
-                                                                                        <div>
+                                            <div>
                                                 <label className="block text-sm font-medium text-gray-700 mb-2">
                                                     Serving Size
                                                 </label>
@@ -695,7 +711,7 @@ export default function MealsPage() {
                                                 />
                                             </div>
 
-                                                                                        <div>
+                                            <div>
                                                 <label className="block text-sm font-medium text-gray-700 mb-2">
                                                     Notes (Optional)
                                                 </label>
@@ -711,7 +727,7 @@ export default function MealsPage() {
                                         </div>
                                     )}
 
-                                                                        {(formData.calories || showManualEntry) && (
+                                    {(formData.calories || showManualEntry) && (
                                         <div className="flex gap-4 pt-4">
                                             <button
                                                 type="submit"
@@ -737,7 +753,7 @@ export default function MealsPage() {
                     </div>
                 )}
 
-                                {showEditModal && (
+                {showEditModal && (
                     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
                         <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
                             <div className="p-6">
@@ -756,7 +772,7 @@ export default function MealsPage() {
                                 </div>
 
                                 <form onSubmit={handleEditMeal} className="space-y-4">
-                                                                        <div>
+                                    <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-2">
                                             Meal Type *
                                         </label>
