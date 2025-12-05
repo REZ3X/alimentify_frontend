@@ -5,15 +5,16 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import { api } from '@/lib/api';
 import { notificationManager } from '@/lib/notifications';
+import { CaloriesTrendChart, MacrosDistributionChart, GoalProgressChart, ComplianceChart } from '@/components/NutritionCharts';
 
 export default function MealsPage() {
     const { user, loading: authLoading } = useAuth();
     const router = useRouter();
 
-    const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
+    const [viewMode, setViewMode] = useState('daily'); const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
     const [meals, setMeals] = useState([]);
     const [dailyTotals, setDailyTotals] = useState(null);
-    const [healthProfile, setHealthProfile] = useState(null);
+    const [periodStats, setPeriodStats] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
@@ -42,24 +43,65 @@ export default function MealsPage() {
     }, [user, authLoading, router]);
 
     useEffect(() => {
-        if (user && !healthProfile) {
-            fetchHealthProfile();
-        }
-    }, [user]);
-
-    useEffect(() => {
         if (user) {
-            fetchDailyMeals();
+            if (viewMode === 'daily') {
+                fetchDailyMeals();
+            } else {
+                fetchPeriodStats();
+            }
         }
-    }, [selectedDate, user, healthProfile]);
+    }, [selectedDate, viewMode, user]);
 
-    const fetchHealthProfile = async () => {
+
+
+    const getDateRangeForPeriod = () => {
+        const date = new Date(selectedDate);
+        const today = new Date();
+        let startDate, endDate;
+
+        switch (viewMode) {
+            case 'weekly':
+
+                endDate = new Date(date);
+                startDate = new Date(date);
+                startDate.setDate(startDate.getDate() - 6);
+                break;
+            case 'monthly':
+
+                endDate = new Date(date);
+                startDate = new Date(date);
+                startDate.setDate(startDate.getDate() - 29);
+                break;
+            case 'yearly':
+
+                endDate = new Date(date);
+                startDate = new Date(date);
+                startDate.setDate(startDate.getDate() - 364);
+                break;
+            default:
+                return { startDate: date, endDate: date };
+        }
+
+        return {
+            startDate: startDate.toISOString().split('T')[0],
+            endDate: endDate.toISOString().split('T')[0]
+        };
+    };
+
+    const fetchPeriodStats = async () => {
+        setLoading(true);
+        setError(null);
         try {
-            const profile = await api.getHealthProfile();
-            setHealthProfile(profile);
+            const { startDate, endDate } = getDateRangeForPeriod();
+            console.log('Fetching period stats:', { startDate, endDate, viewMode });
+            const data = await api.getPeriodStats(startDate, endDate);
+            console.log('Period stats response:', data);
+            setPeriodStats(data);
         } catch (err) {
-            console.error('Error fetching health profile:', err);
-
+            console.error('Error fetching period stats:', err);
+            setError(err.message || 'Failed to load period statistics');
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -312,29 +354,58 @@ export default function MealsPage() {
                     </div>
                 )}
 
-                <div className="mb-6 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
-                    <div>
-                        <label htmlFor="date" className="block text-sm font-medium text-gray-700 mb-2">
-                            Select Date
-                        </label>
-                        <input
-                            type="date"
-                            id="date"
-                            value={selectedDate}
-                            onChange={(e) => setSelectedDate(e.target.value)}
-                            max={new Date().toISOString().split('T')[0]}
-                            className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                        />
+                <div className="mb-6 bg-white rounded-2xl shadow-lg p-4">
+                    <div className="flex flex-wrap gap-2 mb-4">
+                        {[
+                            { value: 'daily', label: '📅 Daily', icon: '📅' },
+                            { value: 'weekly', label: '📊 Weekly', icon: '📊' },
+                            { value: 'monthly', label: '📈 Monthly', icon: '📈' },
+                            { value: 'yearly', label: '📉 Yearly', icon: '📉' }
+                        ].map(mode => (
+                            <button
+                                key={mode.value}
+                                onClick={() => setViewMode(mode.value)}
+                                className={`px-4 py-2 rounded-lg font-medium transition-all ${viewMode === mode.value
+                                    ? 'bg-green-600 text-white shadow-md'
+                                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                                    }`}
+                            >
+                                {mode.label}
+                            </button>
+                        ))}
                     </div>
-                    <button
-                        onClick={() => setShowAddModal(true)}
-                        className="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium shadow-md"
-                    >
-                        + Add Meal
-                    </button>
+
+                    <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+                        <div>
+                            <label htmlFor="date" className="block text-sm font-medium text-gray-700 mb-2">
+                                {viewMode === 'daily' ? 'Select Date' : `End Date (${viewMode} view)`}
+                            </label>
+                            <input
+                                type="date"
+                                id="date"
+                                value={selectedDate}
+                                onChange={(e) => setSelectedDate(e.target.value)}
+                                max={new Date().toISOString().split('T')[0]}
+                                className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                            />
+                            {viewMode !== 'daily' && (
+                                <p className="text-xs text-gray-500 mt-1">
+                                    Showing {viewMode === 'weekly' ? '7 days' : viewMode === 'monthly' ? '30 days' : '365 days'} ending on selected date
+                                </p>
+                            )}
+                        </div>
+                        {viewMode === 'daily' && (
+                            <button
+                                onClick={() => setShowAddModal(true)}
+                                className="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium shadow-md"
+                            >
+                                + Add Meal
+                            </button>
+                        )}
+                    </div>
                 </div>
 
-                {!loading && (!user.has_completed_health_survey || !healthProfile) ? (
+                {!loading && !user.has_completed_health_survey ? (
                     <div className="bg-yellow-50 border border-yellow-200 rounded-2xl p-6 mb-8">
                         <div className="flex items-center gap-3 mb-3">
                             <svg className="w-8 h-8 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -354,7 +425,119 @@ export default function MealsPage() {
                     </div>
                 ) : null}
 
-                {dailyTotals && dailyTotals.consumed && dailyTotals.target && dailyTotals.remaining && (
+                {viewMode !== 'daily' && periodStats && !loading && (
+                    <div className="space-y-6 mb-8">
+                        <div className="bg-white rounded-2xl shadow-lg p-6">
+                            <h2 className="text-2xl font-bold text-gray-800 mb-4">
+                                {viewMode.charAt(0).toUpperCase() + viewMode.slice(1)} Overview
+                            </h2>
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                                <div className="bg-gradient-to-br from-orange-50 to-orange-100 rounded-lg p-4">
+                                    <p className="text-sm text-gray-600 mb-1">Avg Calories</p>
+                                    <p className="text-2xl font-bold text-gray-800">
+                                        {Math.round(periodStats.averages?.avg_calories || 0)}
+                                    </p>
+                                    <p className="text-xs text-gray-500 mt-1">
+                                        Target: {Math.round(periodStats.goal_progress?.target_calories || 0)} cal/day
+                                    </p>
+                                </div>
+                                <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-4">
+                                    <p className="text-sm text-gray-600 mb-1">Avg Protein</p>
+                                    <p className="text-2xl font-bold text-gray-800">
+                                        {Math.round(periodStats.averages?.avg_protein_g || 0)}g
+                                    </p>
+                                    <p className="text-xs text-gray-500 mt-1">
+                                        Target: {Math.round(periodStats.goal_progress?.target_protein_g || 0)}g/day
+                                    </p>
+                                </div>
+                                <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-lg p-4">
+                                    <p className="text-sm text-gray-600 mb-1">Avg Carbs</p>
+                                    <p className="text-2xl font-bold text-gray-800">
+                                        {Math.round(periodStats.averages?.avg_carbs_g || 0)}g
+                                    </p>
+                                    <p className="text-xs text-gray-500 mt-1">
+                                        Target: {Math.round(periodStats.goal_progress?.target_carbs_g || 0)}g/day
+                                    </p>
+                                </div>
+                                <div className="bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-lg p-4">
+                                    <p className="text-sm text-gray-600 mb-1">Avg Fat</p>
+                                    <p className="text-2xl font-bold text-gray-800">
+                                        {Math.round(periodStats.averages?.avg_fat_g || 0)}g
+                                    </p>
+                                    <p className="text-xs text-gray-500 mt-1">
+                                        Target: {Math.round(periodStats.goal_progress?.target_fat_g || 0)}g/day
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <div className="bg-white rounded-2xl shadow-lg p-6">
+                                <CaloriesTrendChart
+                                    dailyData={periodStats.daily_data || []}
+                                    target={periodStats.goal_progress?.target_calories || 2000}
+                                />
+                            </div>
+
+                            <div className="bg-white rounded-2xl shadow-lg p-6">
+                                <MacrosDistributionChart
+                                    averages={periodStats.averages || {}}
+                                    targets={{
+                                        protein_g: periodStats.goal_progress?.target_protein_g || 0,
+                                        carbs_g: periodStats.goal_progress?.target_carbs_g || 0,
+                                        fat_g: periodStats.goal_progress?.target_fat_g || 0,
+                                    }}
+                                />
+                            </div>
+
+                            {periodStats.goal_progress && (
+                                <div className="bg-white rounded-2xl shadow-lg p-6">
+                                    <GoalProgressChart goalProgress={periodStats.goal_progress} />
+                                </div>
+                            )}
+
+                            {periodStats.goal_progress && (
+                                <div className="bg-white rounded-2xl shadow-lg p-6">
+                                    <ComplianceChart goalProgress={periodStats.goal_progress} />
+                                </div>
+                            )}
+                        </div>
+
+                        {periodStats.daily_data && periodStats.daily_data.length > 0 && (
+                            <div className="bg-white rounded-2xl shadow-lg p-6">
+                                <h3 className="text-xl font-bold text-gray-800 mb-4">Activity Summary</h3>
+                                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                    <div className="text-center">
+                                        <p className="text-3xl font-bold text-green-600">
+                                            {periodStats.daily_data.filter(d => d.meal_count > 0).length}
+                                        </p>
+                                        <p className="text-sm text-gray-600">Days Logged</p>
+                                    </div>
+                                    <div className="text-center">
+                                        <p className="text-3xl font-bold text-blue-600">
+                                            {periodStats.daily_data.reduce((sum, d) => sum + (d.meal_count || 0), 0)}
+                                        </p>
+                                        <p className="text-sm text-gray-600">Total Meals</p>
+                                    </div>
+                                    <div className="text-center">
+                                        <p className="text-3xl font-bold text-purple-600">
+                                            {Math.round((periodStats.daily_data.filter(d => d.meal_count > 0).length / periodStats.daily_data.length) * 100)}%
+                                        </p>
+                                        <p className="text-sm text-gray-600">Tracking Rate</p>
+                                    </div>
+                                    <div className="text-center">
+                                        <p className="text-3xl font-bold text-orange-600">
+                                            {Math.round(periodStats.totals?.total_calories || 0)}
+                                        </p>
+                                        <p className="text-sm text-gray-600">Total Calories</p>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                )}
+
+                {viewMode === 'daily' && dailyTotals && dailyTotals.consumed && dailyTotals.target && dailyTotals.remaining && (
                     <div className="bg-white rounded-2xl shadow-lg p-6 mb-8">
                         <h2 className="text-2xl font-bold text-gray-800 mb-4">Daily Summary</h2>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -435,9 +618,9 @@ export default function MealsPage() {
 
                 {loading ? (
                     <div className="text-center py-12">
-                        <div className="text-xl text-gray-600">Loading meals...</div>
+                        <div className="text-xl text-gray-600">Loading {viewMode === 'daily' ? 'meals' : 'statistics'}...</div>
                     </div>
-                ) : (
+                ) : viewMode === 'daily' ? (
                     <div className="space-y-6">
                         {['breakfast', 'lunch', 'dinner', 'snack'].map((mealType) => {
                             const typeMeals = getMealsByType(mealType);
@@ -492,7 +675,7 @@ export default function MealsPage() {
                             );
                         })}
                     </div>
-                )}
+                ) : null}
 
                 {showAddModal && (
                     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">

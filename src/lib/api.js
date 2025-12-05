@@ -232,6 +232,14 @@ class ApiClient {
             method: 'DELETE',
         });
     }
+
+    async getPeriodStats(startDate, endDate) {
+        const params = new URLSearchParams({
+            start_date: startDate,
+            end_date: endDate,
+        });
+        return this.request(`/meals/period-stats?${params.toString()}`);
+    }
 }
 
 export const api = new ApiClient();
