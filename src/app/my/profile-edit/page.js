@@ -171,7 +171,7 @@ export default function ProfileEditPage() {
 
     if (authLoading || loading) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 via-white to-blue-50">
+            <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-green-50 via-white to-blue-50">
                 <div className="text-xl text-gray-600">Loading...</div>
             </div>
         );
@@ -181,7 +181,7 @@ export default function ProfileEditPage() {
 
     if (!currentProfile) {
         return (
-            <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-blue-50 p-6">
+            <div className="min-h-screen bg-linear-to-br from-green-50 via-white to-blue-50 p-6">
                 <div className="max-w-4xl mx-auto">
                     <div className="bg-white rounded-2xl shadow-lg p-8 text-center">
                         <svg className="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -206,7 +206,7 @@ export default function ProfileEditPage() {
     const changes = calculateChanges();
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-blue-50 p-6">
+        <div className="min-h-screen bg-linear-to-br from-green-50 via-white to-blue-50 p-6">
             <div className="max-w-4xl mx-auto">
                                 <div className="mb-8">
                     <h1 className="text-4xl font-bold text-gray-800 mb-2">⚙️ Edit Profile</h1>

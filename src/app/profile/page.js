@@ -1,12 +1,14 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
+import Navbar from '@/components/Navbar';
 
 export default function ProfilePage() {
     const { user, loading, logout } = useAuth();
     const router = useRouter();
+    const [imageError, setImageError] = useState(false);
 
     useEffect(() => {
         if (!loading && !user) {
@@ -16,8 +18,8 @@ export default function ProfilePage() {
 
     if (loading) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-gray-50">
-                <div className="w-16 h-16 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin" />
+            <div className="min-h-screen flex items-center justify-center bg-[#FEF3E2]">
+                <div className="w-16 h-16 border-4 border-[#FAB12F] border-t-[#FA812F] rounded-full animate-spin" />
             </div>
         );
     }
@@ -27,174 +29,163 @@ export default function ProfilePage() {
     }
 
     return (
-        <div className="min-h-screen bg-gray-50">
-            <header className="bg-white shadow-sm">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-                    <div className="flex items-center gap-3">
-                        <a href="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
-                            <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center">
-                                <span className="text-white font-bold text-xl">A</span>
-                            </div>
-                            <h1 className="text-2xl font-bold text-gray-900">Alimentify</h1>
-                        </a>
-                    </div>
-                    <a
-                        href="/"
-                        className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
-                    >
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                        </svg>
-                        Back to Home
-                    </a>
-                </div>
-            </header>
+        <div className="min-h-screen bg-[#FEF3E2] relative overflow-x-hidden font-sans selection:bg-[#FAB12F] selection:text-white">
+            {/* Background Pattern */}
+            <div className="fixed inset-0 z-0 opacity-40 pointer-events-none" style={{ backgroundImage: 'radial-gradient(#FAB12F 1px, transparent 1px)', backgroundSize: '24px 24px' }}></div>
+            
+            {/* Decorative Blobs */}
+            <div className="fixed top-0 left-0 w-96 h-96 bg-[#FAB12F]/20 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2 pointer-events-none z-0"></div>
+            <div className="fixed bottom-0 right-0 w-96 h-96 bg-[#FA812F]/10 rounded-full blur-3xl translate-x-1/2 translate-y-1/2 pointer-events-none z-0"></div>
 
-            <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                <div className="bg-white rounded-2xl shadow-lg overflow-hidden mb-8">
-                    <div className="bg-gradient-to-r from-indigo-500 to-purple-600 h-32"></div>
-                    <div className="px-8 pb-8">
-                        <div className="flex flex-col sm:flex-row items-center sm:items-end gap-6 -mt-16">
-                            <img
-                                src={user.profile_image}
-                                alt={user.name}
-                                className="w-32 h-32 rounded-full border-4 border-white shadow-lg"
-                            />
-                            <div className="flex-1 text-center sm:text-left mb-4">
-                                <h2 className="text-3xl font-bold text-gray-900 mb-1">{user.name}</h2>
-                                <p className="text-gray-600 mb-2">@{user.username}</p>
-                                <div className="flex items-center justify-center sm:justify-start gap-2">
-                                    {user.email_verification_status ? (
-                                        <span className="inline-flex items-center gap-1 px-3 py-1 bg-green-100 text-green-800 text-sm font-semibold rounded-full">
-                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                                            </svg>
-                                            Email Verified
-                                        </span>
-                                    ) : (
-                                        <span className="inline-flex items-center gap-1 px-3 py-1 bg-yellow-100 text-yellow-800 text-sm font-semibold rounded-full">
-                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                            </svg>
-                                            Email Not Verified
-                                        </span>
-                                    )}
+            <Navbar />
+
+            <main className="relative z-10 max-w-4xl mx-auto px-4 pt-32 pb-12 space-y-6">
+                {/* Profile Header Card */}
+                <div className="bg-white/60 backdrop-blur-xl border border-white/50 rounded-[2.5rem] p-8 relative overflow-hidden shadow-[0_8px_32px_0_rgba(0,0,0,0.05)] animate-in slide-in-from-bottom-4 fade-in duration-500">
+                    <button 
+                        onClick={() => router.back()}
+                        className="absolute top-6 left-6 p-3 rounded-full bg-white/50 hover:bg-white text-gray-600 hover:text-[#FAB12F] transition-all duration-300 shadow-sm border border-white/50 z-20 group"
+                    >
+                        <svg className="w-5 h-5 transform group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                        </svg>
+                    </button>
+
+                    <div className="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-64 bg-[#FAB12F]/10 rounded-full blur-3xl -translate-y-1/2 pointer-events-none"></div>
+                    
+                    <div className="relative z-10 flex flex-col items-center text-center">
+                        <div className="w-32 h-32 rounded-full p-1.5 bg-linear-to-br from-[#FAB12F] to-[#FA812F] shadow-xl mb-6 group hover:scale-105 transition-transform duration-300">
+                            {user.profile_image && !imageError ? (
+                                <img
+                                    src={user.profile_image}
+                                    alt={user.name}
+                                    className="w-full h-full rounded-full border-4 border-white object-cover bg-white"
+                                    onError={() => setImageError(true)}
+                                />
+                            ) : (
+                                <div className="w-full h-full rounded-full bg-[#FEF3E2] border-4 border-white flex items-center justify-center overflow-hidden">
+                                    <svg className="w-16 h-16 text-[#FAB12F]" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+                                    </svg>
                                 </div>
-                            </div>
+                            )}
+                        </div>
+
+                        <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2 tracking-tight">{user.name}</h1>
+                        <p className="text-gray-500 font-medium text-lg mb-6 font-mono">@{user.username}</p>
+
+                        <div className="flex flex-wrap justify-center gap-3">
+                            {user.email_verification_status ? (
+                                <span className="inline-flex items-center gap-2 px-4 py-2 bg-green-100/80 backdrop-blur-sm text-green-700 text-sm font-bold rounded-full border border-green-200 shadow-sm">
+                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" /></svg>
+                                    Verified Account
+                                </span>
+                            ) : (
+                                <span className="inline-flex items-center gap-2 px-4 py-2 bg-yellow-100/80 backdrop-blur-sm text-yellow-700 text-sm font-bold rounded-full border border-yellow-200 shadow-sm animate-pulse">
+                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+                                    Unverified
+                                </span>
+                            )}
+                            <span className="inline-flex items-center gap-2 px-4 py-2 bg-white/50 backdrop-blur-sm text-gray-600 text-sm font-bold rounded-full border border-white/50 shadow-sm">
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                                Joined {new Date(user.created_at).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
+                            </span>
                         </div>
                     </div>
                 </div>
 
                 {!user.email_verification_status && (
-                    <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6 mb-8">
-                        <div className="flex gap-3">
-                            <svg className="w-6 h-6 text-yellow-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div className="bg-yellow-50/90 backdrop-blur-xl border border-yellow-200 rounded-4xl p-6 flex gap-4 items-start shadow-sm animate-in slide-in-from-bottom-4 fade-in duration-500 delay-100">
+                        <div className="w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center shrink-0 text-yellow-600 shadow-sm">
+                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                             </svg>
-                            <div>
-                                <h3 className="text-lg font-semibold text-yellow-900 mb-1">Verify Your Email</h3>
-                                <p className="text-yellow-800">
-                                    We've sent a verification link to <strong>{user.gmail}</strong>.
-                                    Please check your inbox and click the link to verify your email address.
-                                </p>
-                            </div>
+                        </div>
+                        <div>
+                            <h3 className="text-lg font-bold text-yellow-900 mb-1 font-mono">Verify Your Email</h3>
+                            <p className="text-yellow-800 leading-relaxed text-sm">
+                                We've sent a verification link to <strong>{user.gmail}</strong>.
+                                Please check your inbox to unlock all features.
+                            </p>
                         </div>
                     </div>
                 )}
 
-                <div className="grid md:grid-cols-2 gap-6 mb-8">
-                    <div className="bg-white rounded-xl shadow p-6">
-                        <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                            <svg className="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                            </svg>
-                            Account Information
+                <div className="grid md:grid-cols-2 gap-6">
+                    {/* Account Info */}
+                    <div className="bg-white/60 backdrop-blur-xl border border-white/50 rounded-[2.5rem] p-8 shadow-[0_8px_32px_0_rgba(0,0,0,0.05)] animate-in slide-in-from-bottom-4 fade-in duration-500 delay-200 hover:shadow-lg transition-shadow">
+                        <h3 className="text-lg font-bold text-gray-900 mb-6 flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-2xl bg-blue-50 flex items-center justify-center text-blue-600">
+                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+                            </div>
+                            Account Details
                         </h3>
-                        <div className="space-y-4">
-                            <div>
-                                <label className="text-sm text-gray-600 font-medium">Username</label>
-                                <p className="text-gray-900 font-medium mt-1">@{user.username}</p>
+                        <div className="space-y-5">
+                            <div className="group">
+                                <label className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1 block">Full Name</label>
+                                <p className="text-gray-900 font-medium text-lg group-hover:text-[#FAB12F] transition-colors">{user.name}</p>
                             </div>
-                            <div>
-                                <label className="text-sm text-gray-600 font-medium">Full Name</label>
-                                <p className="text-gray-900 font-medium mt-1">{user.name}</p>
+                            <div className="h-px bg-gray-100"></div>
+                            <div className="group">
+                                <label className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1 block">Email Address</label>
+                                <p className="text-gray-900 font-medium text-lg group-hover:text-[#FAB12F] transition-colors truncate">{user.gmail}</p>
                             </div>
-                            <div>
-                                <label className="text-sm text-gray-600 font-medium">Email Address</label>
-                                <p className="text-gray-900 font-medium mt-1">{user.gmail}</p>
+                            <div className="h-px bg-gray-100"></div>
+                            <div className="group">
+                                <label className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1 block">Username</label>
+                                <p className="text-gray-900 font-medium text-lg font-mono group-hover:text-[#FAB12F] transition-colors">@{user.username}</p>
                             </div>
                         </div>
                     </div>
 
-                    <div className="bg-white rounded-xl shadow p-6">
-                        <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                            <svg className="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                            Account Activity
+                    {/* Activity Stats */}
+                    <div className="bg-white/60 backdrop-blur-xl border border-white/50 rounded-[2.5rem] p-8 shadow-[0_8px_32px_0_rgba(0,0,0,0.05)] animate-in slide-in-from-bottom-4 fade-in duration-500 delay-300 hover:shadow-lg transition-shadow">
+                        <h3 className="text-lg font-bold text-gray-900 mb-6 flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-2xl bg-purple-50 flex items-center justify-center text-purple-600">
+                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                            </div>
+                            Activity Log
                         </h3>
-                        <div className="space-y-4">
-                            <div>
-                                <label className="text-sm text-gray-600 font-medium">Account Created</label>
-                                <p className="text-gray-900 font-medium mt-1">
-                                    {new Date(user.created_at).toLocaleDateString('en-US', {
-                                        year: 'numeric',
-                                        month: 'long',
-                                        day: 'numeric',
-                                        hour: '2-digit',
-                                        minute: '2-digit'
-                                    })}
+                        <div className="space-y-5">
+                            <div className="group">
+                                <label className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1 block">Member Since</label>
+                                <p className="text-gray-900 font-medium text-lg group-hover:text-purple-600 transition-colors">
+                                    {new Date(user.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
                                 </p>
                             </div>
-                            <div>
-                                <label className="text-sm text-gray-600 font-medium">Last Updated</label>
-                                <p className="text-gray-900 font-medium mt-1">
-                                    {new Date(user.updated_at).toLocaleDateString('en-US', {
-                                        year: 'numeric',
-                                        month: 'long',
-                                        day: 'numeric',
-                                        hour: '2-digit',
-                                        minute: '2-digit'
-                                    })}
+                            <div className="h-px bg-gray-100"></div>
+                            <div className="group">
+                                <label className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1 block">Last Profile Update</label>
+                                <p className="text-gray-900 font-medium text-lg group-hover:text-purple-600 transition-colors">
+                                    {new Date(user.updated_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
                                 </p>
                             </div>
                             {user.email_verified_at && (
-                                <div>
-                                    <label className="text-sm text-gray-600 font-medium">Email Verified At</label>
-                                    <p className="text-gray-900 font-medium mt-1">
-                                        {new Date(user.email_verified_at).toLocaleDateString('en-US', {
-                                            year: 'numeric',
-                                            month: 'long',
-                                            day: 'numeric',
-                                            hour: '2-digit',
-                                            minute: '2-digit'
-                                        })}
-                                    </p>
-                                </div>
+                                <>
+                                    <div className="h-px bg-gray-100"></div>
+                                    <div className="group">
+                                        <label className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1 block">Verified On</label>
+                                        <p className="text-gray-900 font-medium text-lg group-hover:text-purple-600 transition-colors">
+                                            {new Date(user.email_verified_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+                                        </p>
+                                    </div>
+                                </>
                             )}
                         </div>
                     </div>
                 </div>
 
-                <div className="bg-white rounded-xl shadow p-6">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                        <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                        </svg>
-                        Account Settings
-                    </h3>
-                    <div className="space-y-3">
-                        <button
-                            onClick={logout}
-                            className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium"
-                        >
-                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                            </svg>
-                            Logout
-                        </button>
-                    </div>
+                {/* Actions */}
+                <div className="bg-white/60 backdrop-blur-xl border border-white/50 rounded-[2.5rem] p-4 shadow-[0_8px_32px_0_rgba(0,0,0,0.05)] animate-in slide-in-from-bottom-4 fade-in duration-500 delay-400">
+                    <button
+                        onClick={logout}
+                        className="w-full flex items-center justify-center gap-3 px-6 py-4 bg-red-50 hover:bg-red-100 text-red-600 rounded-4xl transition-all duration-300 font-bold group"
+                    >
+                        <span className="w-8 h-8 rounded-full bg-red-100 group-hover:bg-red-200 flex items-center justify-center transition-colors">
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
+                        </span>
+                        Sign Out of Account
+                    </button>
                 </div>
             </main>
         </div>

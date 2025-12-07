@@ -97,7 +97,7 @@ export function CaloriesTrendChart({ dailyData, target }) {
     };
 
     return (
-        <div className="h-[300px]">
+        <div className="h-full w-full">
             <Line data={data} options={options} />
         </div>
     );
@@ -185,7 +185,7 @@ export function MacrosDistributionChart({ averages, targets }) {
     };
 
     return (
-        <div className="h-[300px]">
+        <div className="h-full w-full">
             <Bar data={data} options={options} />
         </div>
     );
