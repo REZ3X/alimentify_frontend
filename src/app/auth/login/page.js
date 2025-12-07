@@ -69,7 +69,7 @@ export default function LoginPage() {
                     </Link>
                 </div>
 
-                <div className="bg-white/60 backdrop-blur-xl border border-white/50 rounded-[2rem] shadow-[0_8px_32px_0_rgba(0,0,0,0.05)] p-8 md:p-10">
+                <div className="bg-white/60 backdrop-blur-xl border border-white/50 rounded-4xl shadow-[0_8px_32px_0_rgba(0,0,0,0.05)] p-8 md:p-10">
                     <div className="text-center mb-8">
                         <h1 className="text-3xl font-mono font-bold text-gray-900 mb-3">Welcome Back</h1>
                         <p className="text-gray-600">Sign in to continue your healthy journey</p>
@@ -77,7 +77,7 @@ export default function LoginPage() {
 
                     {error && (
                         <div className="mb-6 p-4 bg-red-50/80 backdrop-blur-sm border border-red-200 rounded-2xl flex items-start gap-3">
-                            <svg className="w-5 h-5 text-red-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                            <svg className="w-5 h-5 text-red-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                             <p className="text-red-600 text-sm font-medium">{error}</p>
                         </div>
                     )}

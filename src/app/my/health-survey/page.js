@@ -35,7 +35,7 @@ export default function HealthSurveyPage() {
 
     if (authLoading) {
         return (
-            <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 flex items-center justify-center">
+            <div className="min-h-screen bg-linear-to-br from-green-50 to-blue-50 flex items-center justify-center">
                 <div className="text-center">
                     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto"></div>
                     <p className="mt-4 text-gray-600">Loading...</p>
@@ -89,7 +89,7 @@ export default function HealthSurveyPage() {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50">
+        <div className="min-h-screen bg-linear-to-br from-green-50 to-blue-50">
                         <div className="bg-white shadow-sm border-b">
                 <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
                     <h1 className="text-3xl font-bold text-gray-900">Health Profile Setup</h1>

@@ -385,7 +385,7 @@ export default function LandingPage() {
         </div>
 
         {/* CTA Section */}
-        <div className="relative overflow-hidden rounded-[2rem] md:rounded-[3rem] bg-[#FA812F] shadow-2xl mx-4 md:mx-0 mb-12">
+        <div className="relative overflow-hidden rounded-4xl md:rounded-[3rem] bg-[#FA812F] shadow-2xl mx-4 md:mx-0 mb-12">
           <div className="absolute top-0 right-0 w-64 h-64 md:w-96 md:h-96 bg-[#FAB12F] rounded-full blur-3xl opacity-40 -translate-y-1/2 translate-x-1/2 animate-pulse" />
           <div className="absolute bottom-0 left-0 w-64 h-64 md:w-96 md:h-96 bg-[#FAB12F] rounded-full blur-3xl opacity-40 translate-y-1/2 -translate-x-1/2 animate-pulse delay-700" />
           
