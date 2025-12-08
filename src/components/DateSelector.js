@@ -3,7 +3,7 @@ export default function DateSelector({ viewMode, setViewMode, selectedDate, setS
         <div className="bg-white/60 backdrop-blur-xl border border-white/50 rounded-[2.5rem] p-6 mb-8 shadow-[0_8px_32px_0_rgba(0,0,0,0.05)] animate-in slide-in-from-top-4 fade-in duration-500">
             <div className="flex flex-col lg:flex-row gap-6 items-center justify-between">
                 {/* View Mode Toggles */}
-                <div className="flex bg-gray-100/50 p-1.5 rounded-2xl w-full lg:w-auto overflow-x-auto">
+                <div className="flex bg-gray-100/50 p-1.5 rounded-2xl w-full lg:w-auto overflow-x-auto custom-scrollbar">
                     {[
                         { value: 'daily', label: 'Daily' },
                         { value: 'weekly', label: 'Weekly' },
