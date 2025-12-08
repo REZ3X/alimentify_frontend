@@ -84,7 +84,7 @@ export default function DashboardPage() {
         <div className="min-h-screen bg-[#FEF3E2] relative overflow-x-hidden font-sans selection:bg-[#FAB12F] selection:text-white">
             {/* Background Pattern */}
             <div className="fixed inset-0 z-0 opacity-40 pointer-events-none" style={{ backgroundImage: 'radial-gradient(#FAB12F 1px, transparent 1px)', backgroundSize: '24px 24px' }}></div>
-            
+
             {/* Decorative Blobs */}
             <div className="fixed top-0 left-0 w-96 h-96 bg-[#FAB12F]/20 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2 pointer-events-none z-0"></div>
             <div className="fixed bottom-0 right-0 w-96 h-96 bg-[#FA812F]/10 rounded-full blur-3xl translate-x-1/2 translate-y-1/2 pointer-events-none z-0"></div>
@@ -162,11 +162,10 @@ export default function DashboardPage() {
                             <div className="bg-white/60 backdrop-blur-md border border-white/50 rounded-4xl p-6 shadow-sm">
                                 <div className="flex items-center justify-between mb-4">
                                     <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider">BMI Score</h3>
-                                    <span className={`px-3 py-1 rounded-full text-xs font-bold ${
-                                        healthProfile.bmi_category === 'Normal' ? 'bg-green-100 text-green-700' :
-                                        healthProfile.bmi_category === 'Underweight' ? 'bg-blue-100 text-blue-700' :
-                                        'bg-orange-100 text-orange-700'
-                                    }`}>
+                                    <span className={`px-3 py-1 rounded-full text-xs font-bold ${healthProfile.bmi_category === 'Normal' ? 'bg-green-100 text-green-700' :
+                                            healthProfile.bmi_category === 'Underweight' ? 'bg-blue-100 text-blue-700' :
+                                                'bg-orange-100 text-orange-700'
+                                        }`}>
                                         {healthProfile.bmi_category}
                                     </span>
                                 </div>
@@ -219,7 +218,7 @@ export default function DashboardPage() {
                         <span className="w-2 h-8 bg-[#FA812F] rounded-full"></span>
                         Quick Actions
                     </h2>
-                    
+
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {[
                             { href: '/my/meals', title: 'Track Meals', desc: 'Log your daily food intake', icon: '🍽️', color: 'bg-green-100 text-green-600' },
@@ -228,6 +227,7 @@ export default function DashboardPage() {
                             { href: '/my/recipes', title: 'Healthy Recipes', desc: 'Discover nutritious meal ideas', icon: '🥗', color: 'bg-orange-100 text-orange-600' },
                             { href: '/my/food-wiki', title: 'Food Wiki', desc: 'Explore USDA food data', icon: '📚', color: 'bg-yellow-100 text-yellow-600' },
                             { href: '/my/progress', title: 'View Progress', desc: 'Check your analytics & charts', icon: '📈', color: 'bg-purple-100 text-purple-600' },
+                            { href: '/my/reports', title: 'Nutrition Reports', desc: 'Generate & view reports', icon: '📊', color: 'bg-teal-100 text-teal-600' },
                         ].map((action, idx) => (
                             <Link
                                 key={idx}
