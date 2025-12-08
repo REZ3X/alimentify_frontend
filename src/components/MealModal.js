@@ -79,12 +79,12 @@ export default function MealModal({
 
     return (
         <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center p-4 z-60 animate-in fade-in duration-200">
-            <div className="bg-white/90 backdrop-blur-xl rounded-[2.5rem] shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto animate-in zoom-in-95 duration-300 border border-white/50">
+            <div className="bg-white/90 backdrop-blur-xl rounded-[2.5rem] shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto custom-scrollbar animate-in zoom-in-95 duration-300 border border-white/50">
                 <div className="p-8">
                     <div className="flex justify-between items-center mb-8">
                         <div>
                             <h2 className="text-2xl font-bold text-gray-900">
-                                {isEditing ? '✏️ Edit Meal' : '✨ Add Meal'}
+                                {isEditing ? 'Edit Meal' : 'Add Meal'}
                             </h2>
                             <p className="text-sm text-gray-500 mt-1">
                                 {isEditing ? 'Update your meal details below' : 'Track what you ate today'}
@@ -98,41 +98,31 @@ export default function MealModal({
                         </button>
                     </div>
 
-                    {!isEditing && (
-                        <div className="mb-8 bg-linear-to-r from-blue-50 to-purple-50 border border-blue-100 rounded-3xl p-5 relative overflow-hidden">
-                            <div className="relative z-10 flex items-start gap-4">
-                                <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-xl shadow-sm shrink-0">
-                                    🤖
-                                </div>
-                                <div>
-                                    <p className="text-sm font-bold text-blue-900 mb-1">AI Smart Analysis</p>
-                                    <p className="text-xs text-blue-700 leading-relaxed">
-                                        Type what you ate naturally (e.g., "2 slices of pepperoni pizza") and let our AI calculate the nutrition for you.
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    )}
-
                     <form onSubmit={handleSubmit} className="space-y-6">
                         <div className="grid md:grid-cols-2 gap-6">
                             <div className="md:col-span-2">
                                 <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">
                                     Meal Type
                                 </label>
-                                <div className="grid grid-cols-4 gap-2">
+                                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                                     {['breakfast', 'lunch', 'dinner', 'snack'].map(type => (
                                         <button
                                             key={type}
                                             type="button"
                                             onClick={() => handleInputChange({ target: { name: 'meal_type', value: type } })}
-                                            className={`py-2.5 rounded-xl text-sm font-bold transition-all ${
+                                            className={`py-3 rounded-xl text-sm font-bold transition-all flex items-center justify-center gap-2 ${
                                                 formData.meal_type === type
                                                     ? 'bg-[#FAB12F] text-white shadow-md transform scale-105'
                                                     : 'bg-gray-50 text-gray-600 hover:bg-gray-100'
                                             }`}
                                         >
-                                            {type.charAt(0).toUpperCase() + type.slice(1)}
+                                            <span className="text-base">
+                                                {type === 'breakfast' && '🍳'}
+                                                {type === 'lunch' && '🥗'}
+                                                {type === 'dinner' && '🍽️'}
+                                                {type === 'snack' && '🥨'}
+                                            </span>
+                                            <span>{type.charAt(0).toUpperCase() + type.slice(1)}</span>
                                         </button>
                                     ))}
                                 </div>
@@ -148,7 +138,7 @@ export default function MealModal({
                                     value={formData.food_name}
                                     onChange={handleInputChange}
                                     placeholder="e.g., Grilled Chicken Salad"
-                                    className="w-full px-5 py-3 bg-gray-50 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#FAB12F] focus:border-transparent transition-all"
+                                    className="w-full px-5 py-3 bg-gray-50 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#FAB12F] focus:border-transparent transition-all text-gray-900"
                                     required
                                 />
                             </div>
@@ -164,7 +154,7 @@ export default function MealModal({
                                         value={formData.portion_description}
                                         onChange={handleInputChange}
                                         placeholder="e.g., 1 large bowl"
-                                        className="w-full px-5 py-3 bg-gray-50 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#FAB12F] focus:border-transparent transition-all"
+                                        className="w-full px-5 py-3 bg-gray-50 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#FAB12F] focus:border-transparent transition-all text-gray-900"
                                     />
                                 </div>
                             )}
@@ -187,7 +177,7 @@ export default function MealModal({
                                     </>
                                 ) : (
                                     <>
-                                        <span>✨ Analyze Nutrition</span>
+                                        <span>Analyze Nutrition</span>
                                     </>
                                 )}
                             </button>
@@ -270,7 +260,7 @@ export default function MealModal({
                                         value={formData.notes}
                                         onChange={handleInputChange}
                                         rows="2"
-                                        className="w-full px-5 py-3 bg-gray-50 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#FAB12F] focus:border-transparent transition-all resize-none"
+                                        className="w-full px-5 py-3 bg-gray-50 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#FAB12F] focus:border-transparent transition-all resize-none text-gray-900"
                                         placeholder="Add any extra details..."
                                     ></textarea>
                                 </div>
