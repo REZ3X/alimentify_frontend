@@ -240,6 +240,33 @@ class ApiClient {
         });
         return this.request(`/meals/period-stats?${params.toString()}`);
     }
+
+    async generateReport(reportType, startDate, endDate, sendEmail = false) {
+        const params = new URLSearchParams({
+            report_type: reportType,
+            start_date: startDate,
+            end_date: endDate,
+            send_email: sendEmail.toString(),
+        });
+        return this.request(`/reports/generate?${params.toString()}`, {
+            method: 'POST',
+        });
+    }
+
+    async getUserReports(limit = 50) {
+        const params = new URLSearchParams({ limit: limit.toString() });
+        return this.request(`/reports?${params.toString()}`);
+    }
+
+    async getReportById(reportId) {
+        return this.request(`/reports/${reportId}`);
+    }
+
+    async deleteReport(reportId) {
+        return this.request(`/reports/${reportId}`, {
+            method: 'DELETE',
+        });
+    }
 }
 
 export const api = new ApiClient();
