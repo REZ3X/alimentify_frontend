@@ -174,7 +174,7 @@ export default function NutritionSearchPage() {
                                 <button
                                     type="submit"
                                     disabled={loading || !searchQuery.trim()}
-                                    className="w-full py-4 bg-gradient-to-r from-[#FAB12F] to-[#FA812F] text-white rounded-2xl font-bold shadow-lg shadow-[#FAB12F]/20 hover:shadow-[#FAB12F]/40 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-2"
+                                    className="w-full py-4 bg-linear-to-r from-[#FAB12F] to-[#FA812F] text-white rounded-2xl font-bold shadow-lg shadow-[#FAB12F]/20 hover:shadow-[#FAB12F]/40 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-2"
                                 >
                                     {loading ? (
                                         <>
@@ -207,7 +207,7 @@ export default function NutritionSearchPage() {
 
                             <div className="mt-8 p-4 bg-blue-50/50 rounded-2xl border border-blue-100">
                                 <div className="flex gap-3">
-                                    <svg className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <svg className="w-5 h-5 text-blue-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                     </svg>
                                     <div className="text-sm text-blue-900">
@@ -244,28 +244,9 @@ export default function NutritionSearchPage() {
                                                     Serving Size: <span className="font-semibold text-gray-700">{item.serving_size_g}g</span>
                                                 </p>
                                             </div>
-                                            <div className="flex items-center gap-2 bg-[#FAB12F]/10 px-4 py-2 rounded-2xl self-start">
-                                                <span className="text-2xl font-black text-[#FAB12F]">{item.calories === 0 ? 'N/A' : item.calories}</span>
-                                                <span className="text-xs font-bold text-[#FAB12F] uppercase tracking-wider">kcal</span>
-                                            </div>
                                         </div>
 
-                                        {(item.calories === 0 || item.serving_size_g === 0 || item.protein_g === 0) && (
-                                            <div className="mb-6 p-4 bg-yellow-50/80 border border-yellow-100 rounded-2xl">
-                                                <p className="text-sm text-yellow-800 flex gap-2">
-                                                    <svg className="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
-                                                    <span>Limited data available. Try <button onClick={navigateToFoodWiki} className="underline font-bold hover:text-yellow-900">Food Wiki</button> for more.</span>
-                                                </p>
-                                            </div>
-                                        )}
-
-                                        <div className="grid grid-cols-3 gap-4 mb-8">
-                                            <div className="bg-blue-50/50 rounded-2xl p-4 text-center border border-blue-100">
-                                                <div className="text-xl font-bold text-blue-600 mb-1">
-                                                    {item.protein_g === 0 ? '-' : `${item.protein_g}g`}
-                                                </div>
-                                                <div className="text-xs text-gray-500 uppercase tracking-wide font-medium">Protein</div>
-                                            </div>
+                                        <div className="grid grid-cols-2 gap-4 mb-8">
                                             <div className="bg-orange-50/50 rounded-2xl p-4 text-center border border-orange-100">
                                                 <div className="text-xl font-bold text-orange-600 mb-1">{item.carbohydrates_total_g}g</div>
                                                 <div className="text-xs text-gray-500 uppercase tracking-wide font-medium">Carbs</div>
