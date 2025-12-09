@@ -189,6 +189,137 @@ class NotificationManager {
     }
 
     /**
+     * Show a toast success message (in-app notification)
+     * @param {string} message - The message to display
+     */
+    success(message) {
+        this._showToast(message, 'success');
+    }
+
+    /**
+     * Show a toast error message (in-app notification)
+     * @param {string} message - The message to display
+     */
+    error(message) {
+        this._showToast(message, 'error');
+    }
+
+    /**
+     * Show a toast info message (in-app notification)
+     * @param {string} message - The message to display
+     */
+    info(message) {
+        this._showToast(message, 'info');
+    }
+
+    /**
+     * Internal method to create and show toast notifications
+     * @private
+     */
+    _showToast(message, type = 'info') {
+        if (typeof window === 'undefined') return;
+
+        const existingToast = document.querySelector(`.toast-notification.toast-${type}`);
+        if (existingToast) {
+            existingToast.remove();
+        }
+
+        const toast = document.createElement('div');
+        toast.className = `toast-notification toast-${type}`;
+
+        const styles = {
+            success: {
+                bg: 'rgba(34, 197, 94, 0.95)',
+                icon: '✓',
+                iconBg: 'rgba(255, 255, 255, 0.2)'
+            },
+            error: {
+                bg: 'rgba(239, 68, 68, 0.95)',
+                icon: '✕',
+                iconBg: 'rgba(255, 255, 255, 0.2)'
+            },
+            info: {
+                bg: 'rgba(59, 130, 246, 0.95)',
+                icon: 'ℹ',
+                iconBg: 'rgba(255, 255, 255, 0.2)'
+            }
+        };
+
+        const style = styles[type] || styles.info;
+
+        toast.style.cssText = `
+            position: fixed;
+            top: 24px;
+            right: 24px;
+            background: ${style.bg};
+            backdrop-filter: blur(12px);
+            color: white;
+            padding: 16px 20px;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            z-index: 9999;
+            max-width: 400px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-family: system-ui, -apple-system, sans-serif;
+            font-size: 14px;
+            font-weight: 500;
+            animation: toastSlideIn 0.3s ease-out;
+        `;
+
+        toast.innerHTML = `
+            <div style="
+                width: 28px;
+                height: 28px;
+                background: ${style.iconBg};
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 14px;
+                flex-shrink: 0;
+            ">${style.icon}</div>
+            <span style="flex: 1;">${message}</span>
+        `;
+
+        if (!document.querySelector('#toast-animations')) {
+            const styleSheet = document.createElement('style');
+            styleSheet.id = 'toast-animations';
+            styleSheet.textContent = `
+                @keyframes toastSlideIn {
+                    from {
+                        transform: translateX(100%);
+                        opacity: 0;
+                    }
+                    to {
+                        transform: translateX(0);
+                        opacity: 1;
+                    }
+                }
+                @keyframes toastSlideOut {
+                    from {
+                        transform: translateX(0);
+                        opacity: 1;
+                    }
+                    to {
+                        transform: translateX(100%);
+                        opacity: 0;
+                    }
+                }
+            `;
+            document.head.appendChild(styleSheet);
+        }
+
+        document.body.appendChild(toast);
+
+        setTimeout(() => {
+            toast.style.animation = 'toastSlideOut 0.3s ease-in forwards';
+            setTimeout(() => toast.remove(), 300);
+        }, 4000);
+    }
+
+    /**
      * Schedule meal reminders based on user preferences
      * @param {Array} mealTimes - Array of {mealType, time} objects
      * @param {number} targetCalories - Daily target calories
@@ -213,7 +344,7 @@ class NotificationManager {
             }
 
             const delay = scheduledTime - now;
-            const mealCalories = Math.round(targetCalories / 3); 
+            const mealCalories = Math.round(targetCalories / 3);
             const timerId = setTimeout(() => {
                 this.showMealReminder(mealType, mealCalories);
 

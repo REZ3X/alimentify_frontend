@@ -115,7 +115,7 @@ export default function RecipesPage() {
             const mealData = {
                 meal_type: logFormData.meal_type,
                 food_name: selectedRecipe.strMeal,
-                calories: 0, 
+                calories: 0,
                 protein_g: 0,
                 carbs_g: 0,
                 fat_g: 0,
@@ -163,7 +163,7 @@ export default function RecipesPage() {
         <div className="min-h-screen bg-[#FEF3E2] relative overflow-x-hidden font-sans selection:bg-[#FAB12F] selection:text-white pb-24 pt-28">
             {/* Background Pattern */}
             <div className="fixed inset-0 z-0 opacity-40 pointer-events-none" style={{ backgroundImage: 'radial-gradient(#FAB12F 1px, transparent 1px)', backgroundSize: '24px 24px' }}></div>
-            
+
             {/* Decorative Blobs */}
             <div className="fixed top-0 left-0 w-96 h-96 bg-[#FAB12F]/20 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2 pointer-events-none z-0"></div>
             <div className="fixed bottom-0 right-0 w-96 h-96 bg-[#FA812F]/10 rounded-full blur-3xl translate-x-1/2 translate-y-1/2 pointer-events-none z-0"></div>
@@ -174,7 +174,7 @@ export default function RecipesPage() {
                 {/* Header Section */}
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                     <div className="flex items-center gap-4">
-                        <button 
+                        <button
                             onClick={() => {
                                 if (viewMode === 'detail') {
                                     setViewMode('grid');
@@ -229,7 +229,7 @@ export default function RecipesPage() {
                                 </button>
                             </form>
                         </div>
-                        
+
                         <button
                             onClick={loadRandomRecipes}
                             disabled={loading}
@@ -374,15 +374,21 @@ export default function RecipesPage() {
                                         </ul>
                                     </div>
 
-                                    <button
-                                        onClick={openLogModal}
-                                        className="w-full py-4 bg-linear-to-r from-[#FAB12F] to-[#FA812F] text-white rounded-2xl font-bold shadow-lg shadow-[#FAB12F]/20 hover:shadow-[#FAB12F]/40 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 flex items-center justify-center gap-2"
-                                    >
-                                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                                        </svg>
-                                        Log This Meal
-                                    </button>
+                                    <div className="relative group">
+                                        {/* <button
+                                            disabled
+                                            className="w-full py-4 bg-gray-300 text-gray-500 rounded-2xl font-bold cursor-not-allowed flex items-center justify-center gap-2 opacity-60"
+                                        >
+                                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                                            </svg>
+                                            Log This Meal
+                                        </button> */}
+                                        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-4 py-2 bg-gray-800 text-white text-sm rounded-xl opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+                                            Logging from recipes is currently unavailable
+                                            <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-gray-800"></div>
+                                        </div>
+                                    </div>
                                 </div>
 
                                 {/* Instructions Column */}
@@ -444,7 +450,7 @@ export default function RecipesPage() {
                             <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2"></div>
                             <h2 className="text-2xl font-black relative z-10">Log Meal</h2>
                             <p className="text-white/80 text-sm font-medium relative z-10">{selectedRecipe.strMeal}</p>
-                            <button 
+                            <button
                                 onClick={() => setShowLogModal(false)}
                                 className="absolute top-4 right-4 p-2 bg-white/20 hover:bg-white/30 rounded-full transition-colors"
                             >
@@ -504,14 +510,14 @@ export default function RecipesPage() {
                                     </p>
                                 </div>
 
-                                <div className="flex gap-4 pt-2">
+                                {/* <div className="flex gap-4 pt-2">
                                     <button
                                         type="submit"
                                         className="flex-1 py-4 bg-linear-to-r from-[#FAB12F] to-[#FA812F] text-white rounded-2xl font-bold shadow-lg shadow-[#FAB12F]/20 hover:shadow-[#FAB12F]/40 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300"
                                     >
                                         Log Recipe
                                     </button>
-                                </div>
+                                </div> */}
                             </form>
                         </div>
                     </div>

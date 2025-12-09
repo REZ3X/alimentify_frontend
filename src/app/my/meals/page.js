@@ -102,7 +102,7 @@ export default function MealsPage() {
         try {
             const data = await api.getDailyMeals(selectedDate);
             setMeals(data.meals || []);
-            
+
             if (data.daily_totals) {
                 const totals = data.daily_totals;
                 setDailyTotals({
@@ -137,12 +137,18 @@ export default function MealsPage() {
     // Handlers
     const handleAnalyzeFood = async (foodName, portionDescription) => {
         if (!foodName.trim()) return;
-        
+
         setAnalyzingFood(true);
         try {
             const portionInfo = portionDescription ? ` (${portionDescription})` : '';
             const result = await api.analyzeFoodText(`${foodName}${portionInfo}`);
-            return result; 
+
+            if (result.is_valid_food === false) {
+                notificationManager.error(result.message || "This doesn't appear to be a valid food item.");
+                return null;
+            }
+
+            return result;
         } catch (err) {
             console.error('Error analyzing food:', err);
             notificationManager.error('Failed to analyze food. Please try again.');
@@ -220,7 +226,7 @@ export default function MealsPage() {
         <div className="min-h-screen bg-[#FEF3E2] relative overflow-x-hidden font-sans selection:bg-[#FAB12F] selection:text-white pb-24 pt-28">
             {/* Background Pattern */}
             <div className="fixed inset-0 z-0 opacity-40 pointer-events-none" style={{ backgroundImage: 'radial-gradient(#FAB12F 1px, transparent 1px)', backgroundSize: '24px 24px' }}></div>
-            
+
             {/* Decorative Blobs */}
             <div className="fixed top-0 left-0 w-96 h-96 bg-[#FAB12F]/20 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2 pointer-events-none z-0"></div>
             <div className="fixed bottom-0 right-0 w-96 h-96 bg-[#FA812F]/10 rounded-full blur-3xl translate-x-1/2 translate-y-1/2 pointer-events-none z-0"></div>
@@ -231,7 +237,7 @@ export default function MealsPage() {
                 {/* Header */}
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
-                        <button 
+                        <button
                             onClick={() => router.back()}
                             className="p-3 rounded-full bg-white/50 hover:bg-white text-gray-600 hover:text-[#FAB12F] transition-all duration-300 shadow-sm border border-white/50 group"
                         >
@@ -246,7 +252,7 @@ export default function MealsPage() {
                     </div>
                 </div>
 
-                <DateSelector 
+                <DateSelector
                     selectedDate={selectedDate}
                     setSelectedDate={setSelectedDate}
                     viewMode={viewMode}
@@ -269,7 +275,7 @@ export default function MealsPage() {
                         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 items-start">
                             {['breakfast', 'lunch', 'dinner', 'snack'].map((type) => {
                                 const typeMeals = meals.filter(m => m.meal_type === type);
-                                
+
                                 return (
                                     <div key={type} className="bg-white/30 backdrop-blur-sm rounded-4xl p-4 border border-white/40 flex flex-col gap-4 min-h-[200px] transition-all hover:bg-white/40">
                                         <div className="flex items-center justify-between px-2">
@@ -287,10 +293,10 @@ export default function MealsPage() {
 
                                         <div className="space-y-3">
                                             {typeMeals.length > 0 ? (
-                                                typeMeals.map(meal => (
-                                                    <MealCard 
-                                                        key={meal._id} 
-                                                        meal={meal} 
+                                                typeMeals.map((meal, index) => (
+                                                    <MealCard
+                                                        key={meal._id?.$oid || meal._id || `meal-${type}-${index}`}
+                                                        meal={meal}
                                                         onEdit={openEditModal}
                                                         onDelete={handleDeleteMeal}
                                                     />
@@ -311,7 +317,7 @@ export default function MealsPage() {
                                 );
                             })}
                         </div>
-                        
+
                         {/* Empty State for entire day */}
                         {meals.length === 0 && !loading && (
                             <div className="text-center py-12">
@@ -327,7 +333,7 @@ export default function MealsPage() {
                                 <div className="bg-white/60 backdrop-blur-xl p-8 rounded-[2.5rem] shadow-sm border border-white/50">
                                     <h3 className="text-xl font-bold text-gray-900 mb-6">Calories Trend</h3>
                                     <div className="h-80">
-                                        <CaloriesTrendChart dailyData={periodStats.daily_stats || []} target={2000} />
+                                        <CaloriesTrendChart dailyData={periodStats.daily_data || []} target={periodStats.goal_progress?.target_calories || 2000} />
                                     </div>
                                 </div>
 
@@ -335,19 +341,30 @@ export default function MealsPage() {
                                     <div className="bg-white/60 backdrop-blur-xl p-8 rounded-[2.5rem] shadow-sm border border-white/50">
                                         <h3 className="text-xl font-bold text-gray-900 mb-6">Macro Distribution</h3>
                                         <div className="h-80">
-                                            <MacrosDistributionChart averages={periodStats.averages || {}} targets={{protein_g: 128, carbs_g: 231, fat_g: 68}} />
+                                            <MacrosDistributionChart
+                                                averages={{
+                                                    protein_g: periodStats.averages?.avg_protein_g || 0,
+                                                    carbs_g: periodStats.averages?.avg_carbs_g || 0,
+                                                    fat_g: periodStats.averages?.avg_fat_g || 0
+                                                }}
+                                                targets={{
+                                                    protein_g: periodStats.goal_progress?.target_protein_g || 128,
+                                                    carbs_g: periodStats.goal_progress?.target_carbs_g || 231,
+                                                    fat_g: periodStats.goal_progress?.target_fat_g || 68
+                                                }}
+                                            />
                                         </div>
                                     </div>
 
                                     <div className="grid grid-cols-2 gap-4">
                                         <div className="bg-white/60 backdrop-blur-xl p-6 rounded-[2.5rem] shadow-sm border border-white/50">
                                             <h3 className="text-sm font-bold text-gray-500 mb-2">Avg Calories</h3>
-                                            <p className="text-3xl font-black text-gray-900">{Math.round(periodStats.averages?.calories || 0)}</p>
+                                            <p className="text-3xl font-black text-gray-900">{Math.round(periodStats.averages?.avg_calories || 0)}</p>
                                             <p className="text-xs text-gray-400 mt-1">kcal / day</p>
                                         </div>
                                         <div className="bg-white/60 backdrop-blur-xl p-6 rounded-[2.5rem] shadow-sm border border-white/50">
                                             <h3 className="text-sm font-bold text-gray-500 mb-2">Avg Protein</h3>
-                                            <p className="text-3xl font-black text-gray-900">{Math.round(periodStats.averages?.protein_g || 0)}g</p>
+                                            <p className="text-3xl font-black text-gray-900">{Math.round(periodStats.averages?.avg_protein_g || 0)}g</p>
                                             <p className="text-xs text-gray-400 mt-1">per day</p>
                                         </div>
                                     </div>

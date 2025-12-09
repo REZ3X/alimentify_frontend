@@ -1,14 +1,42 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import Navbar from '@/components/Navbar';
+
+const getOptimizedImageUrl = (url) => {
+    if (!url) return null;
+    if (url.includes('googleusercontent.com')) {
+        const baseUrl = url.replace(/=s\d+-c/, '').replace(/=s\d+/, '');
+        return `${baseUrl}=s200-c`;
+    }
+    return url;
+};
 
 export default function ProfilePage() {
     const { user, loading, logout } = useAuth();
     const router = useRouter();
     const [imageError, setImageError] = useState(false);
+    const [imageLoaded, setImageLoaded] = useState(false);
+    const [retryCount, setRetryCount] = useState(0);
+
+    useEffect(() => {
+        setImageError(false);
+        setImageLoaded(false);
+        setRetryCount(0);
+    }, [user?.profile_image]);
+
+    const handleImageError = useCallback(() => {
+        if (retryCount < 2) {
+            setTimeout(() => {
+                setRetryCount(prev => prev + 1);
+                setImageError(false);
+            }, 1000);
+        } else {
+            setImageError(true);
+        }
+    }, [retryCount]);
 
     useEffect(() => {
         if (!loading && !user) {
@@ -28,11 +56,13 @@ export default function ProfilePage() {
         return null;
     }
 
+    const optimizedImageUrl = getOptimizedImageUrl(user.profile_image);
+
     return (
         <div className="min-h-screen bg-[#FEF3E2] relative overflow-x-hidden font-sans selection:bg-[#FAB12F] selection:text-white">
             {/* Background Pattern */}
             <div className="fixed inset-0 z-0 opacity-40 pointer-events-none" style={{ backgroundImage: 'radial-gradient(#FAB12F 1px, transparent 1px)', backgroundSize: '24px 24px' }}></div>
-            
+
             {/* Decorative Blobs */}
             <div className="fixed top-0 left-0 w-96 h-96 bg-[#FAB12F]/20 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2 pointer-events-none z-0"></div>
             <div className="fixed bottom-0 right-0 w-96 h-96 bg-[#FA812F]/10 rounded-full blur-3xl translate-x-1/2 translate-y-1/2 pointer-events-none z-0"></div>
@@ -42,7 +72,7 @@ export default function ProfilePage() {
             <main className="relative z-10 max-w-4xl mx-auto px-4 pt-32 pb-12 space-y-6">
                 {/* Profile Header Card */}
                 <div className="bg-white/60 backdrop-blur-xl border border-white/50 rounded-[2.5rem] p-8 relative overflow-hidden shadow-[0_8px_32px_0_rgba(0,0,0,0.05)] animate-in slide-in-from-bottom-4 fade-in duration-500">
-                    <button 
+                    <button
                         onClick={() => router.back()}
                         className="absolute top-6 left-6 p-3 rounded-full bg-white/50 hover:bg-white text-gray-600 hover:text-[#FAB12F] transition-all duration-300 shadow-sm border border-white/50 z-20 group"
                     >
@@ -52,16 +82,29 @@ export default function ProfilePage() {
                     </button>
 
                     <div className="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-64 bg-[#FAB12F]/10 rounded-full blur-3xl -translate-y-1/2 pointer-events-none"></div>
-                    
+
                     <div className="relative z-10 flex flex-col items-center text-center">
                         <div className="w-32 h-32 rounded-full p-1.5 bg-linear-to-br from-[#FAB12F] to-[#FA812F] shadow-xl mb-6 group hover:scale-105 transition-transform duration-300">
-                            {user.profile_image && !imageError ? (
-                                <img
-                                    src={user.profile_image}
-                                    alt={user.name}
-                                    className="w-full h-full rounded-full border-4 border-white object-cover bg-white"
-                                    onError={() => setImageError(true)}
-                                />
+                            {optimizedImageUrl && !imageError ? (
+                                <div className="w-full h-full rounded-full border-4 border-white overflow-hidden relative bg-white">
+                                    {!imageLoaded && (
+                                        <div className="absolute inset-0 bg-[#FEF3E2] flex items-center justify-center">
+                                            <svg className="w-16 h-16 text-[#FAB12F] animate-pulse" fill="currentColor" viewBox="0 0 24 24">
+                                                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+                                            </svg>
+                                        </div>
+                                    )}
+                                    <img
+                                        key={`${optimizedImageUrl}-${retryCount}`}
+                                        src={optimizedImageUrl}
+                                        alt={user.name}
+                                        className={`w-full h-full object-cover ${imageLoaded ? 'opacity-100' : 'opacity-0'} transition-opacity duration-300`}
+                                        onLoad={() => setImageLoaded(true)}
+                                        onError={handleImageError}
+                                        referrerPolicy="no-referrer"
+                                        crossOrigin="anonymous"
+                                    />
+                                </div>
                             ) : (
                                 <div className="w-full h-full rounded-full bg-[#FEF3E2] border-4 border-white flex items-center justify-center overflow-hidden">
                                     <svg className="w-16 h-16 text-[#FAB12F]" fill="currentColor" viewBox="0 0 24 24">
