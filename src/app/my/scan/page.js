@@ -11,14 +11,14 @@ import MealModal from '@/components/MealModal';
 export default function FoodScannerPage() {
     const { user, loading: authLoading } = useAuth();
     const router = useRouter();
-    
+
     // Scanner State
     const [selectedImage, setSelectedImage] = useState(null);
     const [previewUrl, setPreviewUrl] = useState(null);
     const [analyzing, setAnalyzing] = useState(false);
     const [result, setResult] = useState(null);
     const [error, setError] = useState(null);
-    
+
     // Camera State
     const fileInputRef = useRef(null);
     const [useCamera, setUseCamera] = useState(false);
@@ -202,12 +202,44 @@ export default function FoodScannerPage() {
 
         try {
             const response = await api.analyzeFoodImage(selectedImage);
+
+            if (response.is_valid_food === false) {
+                setError(response.message || 'This image does not appear to contain valid food.');
+                return;
+            }
+
             setResult(response);
         } catch (err) {
-            setError(err.message || 'Failed to analyze food. Please try again.');
+            const errorMsg = err.message || 'Failed to analyze food. Please try again.';
+            if (errorMsg.includes('SAFETY') || errorMsg.includes('blocked') || errorMsg.includes('filter')) {
+                setError('This image could not be processed. Please upload a clear photo of food.');
+            } else {
+                setError(errorMsg);
+            }
         } finally {
             setAnalyzing(false);
         }
+    };
+
+    const parseAnalysisForDisplay = (analysisText) => {
+        if (!analysisText) return null;
+
+        try {
+            const jsonMatch = analysisText.match(/\{[\s\S]*\}/);
+            if (jsonMatch) {
+                const parsed = JSON.parse(jsonMatch[0]);
+
+                if (parsed.is_valid_food === false) {
+                    return { isError: true, message: parsed.message };
+                }
+
+                return { isError: false, data: parsed };
+            }
+        } catch (e) {
+            console.log('Failed to parse as JSON, using text display');
+        }
+
+        return { isError: false, rawText: analysisText };
     };
 
     const resetScanner = () => {
@@ -233,8 +265,7 @@ export default function FoodScannerPage() {
 
         // Parsing logic (simplified from original for brevity, assuming similar structure)
         if (result.analysis && typeof result.analysis === 'string') {
-             // Try to parse JSON if it's a string
-             try {
+            try {
                 const jsonMatch = result.analysis.match(/\{[\s\S]*\}/);
                 if (jsonMatch) {
                     parsedData = JSON.parse(jsonMatch[0]);
@@ -247,9 +278,9 @@ export default function FoodScannerPage() {
         // Extract fields
         foodName = parsedData.food_name || '';
         servingSize = parsedData.serving_size || '';
-        
+
         if (parsedData.calories) calories = String(parsedData.calories).match(/(\d+)/)?.[1] || '';
-        
+
         if (parsedData.macronutrients) {
             if (parsedData.macronutrients.protein) protein = String(parsedData.macronutrients.protein).match(/(\d+)/)?.[1] || '';
             if (parsedData.macronutrients.carbohydrates) carbs = String(parsedData.macronutrients.carbohydrates).match(/(\d+)/)?.[1] || '';
@@ -308,7 +339,7 @@ export default function FoodScannerPage() {
         <div className="min-h-screen bg-[#FEF3E2] relative overflow-x-hidden font-sans selection:bg-[#FAB12F] selection:text-white pb-24 pt-28">
             {/* Background Pattern */}
             <div className="fixed inset-0 z-0 opacity-40 pointer-events-none" style={{ backgroundImage: 'radial-gradient(#FAB12F 1px, transparent 1px)', backgroundSize: '24px 24px' }}></div>
-            
+
             {/* Decorative Blobs */}
             <div className="fixed top-0 left-0 w-96 h-96 bg-[#FAB12F]/20 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2 pointer-events-none z-0"></div>
             <div className="fixed bottom-0 right-0 w-96 h-96 bg-[#FA812F]/10 rounded-full blur-3xl translate-x-1/2 translate-y-1/2 pointer-events-none z-0"></div>
@@ -319,7 +350,7 @@ export default function FoodScannerPage() {
                 {/* Header */}
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
-                        <button 
+                        <button
                             onClick={() => router.back()}
                             className="p-3 rounded-full bg-white/50 hover:bg-white text-gray-600 hover:text-[#FAB12F] transition-all duration-300 shadow-sm border border-white/50 group"
                         >
@@ -338,7 +369,7 @@ export default function FoodScannerPage() {
                     {/* Left Column: Scanner Interface */}
                     <div className="space-y-6">
                         <div className="bg-white/60 backdrop-blur-xl rounded-[2.5rem] p-6 sm:p-8 shadow-sm border border-white/50 relative overflow-hidden">
-                            
+
                             {/* Error Message */}
                             {error && (
                                 <div className="mb-6 bg-red-50 text-red-600 p-4 rounded-2xl text-sm font-medium border border-red-100 flex items-center gap-3 animate-in slide-in-from-top-2">
@@ -362,7 +393,7 @@ export default function FoodScannerPage() {
                                         <h3 className="text-xl font-bold text-gray-900 mb-2">Upload Food Photo</h3>
                                         <p className="text-gray-500 text-sm">Tap to browse or drag & drop</p>
                                     </div>
-                                    
+
                                     <div className="relative">
                                         <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-gray-300/50"></div></div>
                                         <div className="relative flex justify-center text-sm"><span className="px-4 bg-white/60 text-gray-500 font-medium">OR</span></div>
@@ -392,17 +423,17 @@ export default function FoodScannerPage() {
                                             muted
                                             className="w-full h-full object-cover"
                                         />
-                                        
+
                                         {/* Camera Controls Overlay */}
                                         <div className="absolute bottom-6 left-0 right-0 flex justify-center items-center gap-6">
-                                            <button 
+                                            <button
                                                 onClick={stopCamera}
                                                 className="p-4 bg-white/20 backdrop-blur-md rounded-full text-white hover:bg-white/30 transition-all"
                                             >
                                                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
                                             </button>
-                                            
-                                            <button 
+
+                                            <button
                                                 onClick={capturePhoto}
                                                 className="w-20 h-20 rounded-full border-4 border-white bg-white/20 backdrop-blur-md flex items-center justify-center hover:scale-105 active:scale-95 transition-all"
                                             >
@@ -410,7 +441,7 @@ export default function FoodScannerPage() {
                                             </button>
 
                                             {isMobile && (
-                                                <button 
+                                                <button
                                                     onClick={flipCamera}
                                                     className="p-4 bg-white/20 backdrop-blur-md rounded-full text-white hover:bg-white/30 transition-all"
                                                 >
@@ -428,7 +459,7 @@ export default function FoodScannerPage() {
                                     <div className="relative rounded-[2rem] overflow-hidden bg-gray-100 shadow-inner">
                                         <img src={previewUrl} alt="Selected food" className="w-full h-auto max-h-[500px] object-contain mx-auto" />
                                         {!result && (
-                                            <button 
+                                            <button
                                                 onClick={resetScanner}
                                                 className="absolute top-4 right-4 p-2 bg-black/50 text-white rounded-full hover:bg-black/70 transition-all"
                                             >
@@ -484,22 +515,190 @@ export default function FoodScannerPage() {
                                     </div>
                                 </div>
 
-                                <div className="bg-white/50 rounded-2xl p-6 mb-6 max-h-[400px] overflow-y-auto custom-scrollbar">
-                                    <div className="prose prose-sm max-w-none text-gray-700">
-                                        <pre className="whitespace-pre-wrap font-sans text-sm leading-relaxed">
-                                            {result.analysis}
-                                        </pre>
-                                    </div>
+                                {/* Formatted Analysis Display */}
+                                <div className="bg-white/50 rounded-2xl p-6 mb-6 max-h-[500px] overflow-y-auto custom-scrollbar">
+                                    {(() => {
+                                        const parsed = parseAnalysisForDisplay(result.analysis);
+
+                                        if (!parsed) {
+                                            return <p className="text-gray-500">No analysis data available</p>;
+                                        }
+
+                                        if (parsed.isError) {
+                                            return (
+                                                <div className="text-center py-8">
+                                                    <div className="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                                        <svg className="w-8 h-8 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                                                        </svg>
+                                                    </div>
+                                                    <p className="text-gray-600">{parsed.message}</p>
+                                                </div>
+                                            );
+                                        }
+
+                                        if (parsed.data) {
+                                            const data = parsed.data;
+                                            return (
+                                                <div className="space-y-6">
+                                                    {/* Food Name & Basic Info */}
+                                                    <div className="text-center pb-4 border-b border-gray-200">
+                                                        <h3 className="text-2xl font-bold text-gray-900 capitalize mb-2">
+                                                            {data.food_name || 'Unknown Food'}
+                                                        </h3>
+                                                        {data.serving_size && (
+                                                            <p className="text-gray-500 text-sm">Serving: {data.serving_size}</p>
+                                                        )}
+                                                        {data.health_score && (
+                                                            <div className="inline-flex items-center gap-2 mt-3 px-4 py-2 bg-[#FAB12F]/10 rounded-full">
+                                                                <span className="text-sm font-medium text-gray-600">Health Score:</span>
+                                                                <span className="text-lg font-bold text-[#FAB12F]">{data.health_score}/10</span>
+                                                            </div>
+                                                        )}
+                                                    </div>
+
+                                                    {/* Calories & Macros */}
+                                                    <div>
+                                                        <h4 className="font-bold text-gray-900 mb-3 flex items-center gap-2">
+                                                            <span className="text-lg">🔥</span> Nutrition Facts
+                                                        </h4>
+                                                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                                                            <div className="bg-orange-50 rounded-xl p-3 text-center border border-orange-100">
+                                                                <div className="text-xl font-bold text-orange-600">
+                                                                    {typeof data.calories === 'string' ? data.calories : `${data.calories || '-'}`}
+                                                                </div>
+                                                                <div className="text-xs text-gray-500 font-medium">Calories</div>
+                                                            </div>
+                                                            {data.macronutrients && (
+                                                                <>
+                                                                    <div className="bg-blue-50 rounded-xl p-3 text-center border border-blue-100">
+                                                                        <div className="text-xl font-bold text-blue-600">{data.macronutrients.protein || '-'}</div>
+                                                                        <div className="text-xs text-gray-500 font-medium">Protein</div>
+                                                                    </div>
+                                                                    <div className="bg-yellow-50 rounded-xl p-3 text-center border border-yellow-100">
+                                                                        <div className="text-xl font-bold text-yellow-600">{data.macronutrients.carbohydrates || '-'}</div>
+                                                                        <div className="text-xs text-gray-500 font-medium">Carbs</div>
+                                                                    </div>
+                                                                    <div className="bg-purple-50 rounded-xl p-3 text-center border border-purple-100">
+                                                                        <div className="text-xl font-bold text-purple-600">{data.macronutrients.fat || '-'}</div>
+                                                                        <div className="text-xs text-gray-500 font-medium">Fat</div>
+                                                                    </div>
+                                                                </>
+                                                            )}
+                                                        </div>
+                                                        {data.macronutrients?.fiber && (
+                                                            <div className="mt-2 text-sm text-gray-600">
+                                                                <span className="font-medium">Fiber:</span> {data.macronutrients.fiber}
+                                                            </div>
+                                                        )}
+                                                    </div>
+
+                                                    {/* Dietary Info */}
+                                                    {data.dietary_info && (
+                                                        <div>
+                                                            <h4 className="font-bold text-gray-900 mb-3 flex items-center gap-2">
+                                                                <span className="text-lg">🏷️</span> Dietary Info
+                                                            </h4>
+                                                            <div className="flex flex-wrap gap-2">
+                                                                {data.dietary_info.is_vegetarian && (
+                                                                    <span className="px-3 py-1 bg-green-100 text-green-700 text-xs font-bold rounded-full">🥬 Vegetarian</span>
+                                                                )}
+                                                                {data.dietary_info.is_vegan && (
+                                                                    <span className="px-3 py-1 bg-green-100 text-green-700 text-xs font-bold rounded-full">🌱 Vegan</span>
+                                                                )}
+                                                                {data.dietary_info.is_gluten_free && (
+                                                                    <span className="px-3 py-1 bg-amber-100 text-amber-700 text-xs font-bold rounded-full">🌾 Gluten-Free</span>
+                                                                )}
+                                                                {!data.dietary_info.is_vegetarian && !data.dietary_info.is_vegan && (
+                                                                    <span className="px-3 py-1 bg-gray-100 text-gray-600 text-xs font-bold rounded-full">Contains Meat/Fish</span>
+                                                                )}
+                                                            </div>
+                                                            {data.dietary_info.allergens && data.dietary_info.allergens.length > 0 && (
+                                                                <div className="mt-3 p-3 bg-red-50 rounded-xl border border-red-100">
+                                                                    <p className="text-xs font-bold text-red-700 mb-1">⚠️ Allergens:</p>
+                                                                    <p className="text-sm text-red-600">{data.dietary_info.allergens.join(', ')}</p>
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                    )}
+
+                                                    {/* Health Notes */}
+                                                    {data.health_notes && (
+                                                        <div>
+                                                            <h4 className="font-bold text-gray-900 mb-2 flex items-center gap-2">
+                                                                <span className="text-lg">💡</span> Health Notes
+                                                            </h4>
+                                                            <p className="text-sm text-gray-600 bg-blue-50 p-3 rounded-xl border border-blue-100">
+                                                                {data.health_notes}
+                                                            </p>
+                                                        </div>
+                                                    )}
+
+                                                    {/* Recommendations */}
+                                                    {data.recommendations && (
+                                                        <div>
+                                                            <h4 className="font-bold text-gray-900 mb-2 flex items-center gap-2">
+                                                                <span className="text-lg">✨</span> Recommendations
+                                                            </h4>
+                                                            <p className="text-sm text-gray-600 bg-[#FEF3E2] p-3 rounded-xl border border-[#FAB12F]/20">
+                                                                {data.recommendations}
+                                                            </p>
+                                                        </div>
+                                                    )}
+
+                                                    {/* Micronutrients */}
+                                                    {data.micronutrients && (data.micronutrients.vitamins?.length > 0 || data.micronutrients.minerals?.length > 0) && (
+                                                        <div>
+                                                            <h4 className="font-bold text-gray-900 mb-2 flex items-center gap-2">
+                                                                <span className="text-lg">💊</span> Micronutrients
+                                                            </h4>
+                                                            <div className="grid grid-cols-2 gap-3">
+                                                                {data.micronutrients.vitamins?.length > 0 && (
+                                                                    <div className="bg-green-50 p-3 rounded-xl border border-green-100">
+                                                                        <p className="text-xs font-bold text-green-700 mb-1">Vitamins</p>
+                                                                        <p className="text-sm text-green-600">{data.micronutrients.vitamins.join(', ')}</p>
+                                                                    </div>
+                                                                )}
+                                                                {data.micronutrients.minerals?.length > 0 && (
+                                                                    <div className="bg-teal-50 p-3 rounded-xl border border-teal-100">
+                                                                        <p className="text-xs font-bold text-teal-700 mb-1">Minerals</p>
+                                                                        <p className="text-sm text-teal-600">{data.micronutrients.minerals.join(', ')}</p>
+                                                                    </div>
+                                                                )}
+                                                            </div>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            );
+                                        }
+
+                                        // Fallback to raw text display
+                                        return (
+                                            <div className="prose prose-sm max-w-none text-gray-700">
+                                                <pre className="whitespace-pre-wrap font-sans text-sm leading-relaxed">
+                                                    {parsed.rawText || result.analysis}
+                                                </pre>
+                                            </div>
+                                        );
+                                    })()}
                                 </div>
 
                                 <div className="flex flex-col sm:flex-row gap-4">
-                                    <button
-                                        onClick={prepareLogData}
-                                        className="flex-1 py-4 bg-green-500 hover:bg-green-600 text-white rounded-2xl font-bold shadow-lg shadow-green-500/20 hover:shadow-green-500/40 transition-all duration-300 flex items-center justify-center gap-2"
-                                    >
-                                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
-                                        Log This Meal
-                                    </button>
+                                    {(() => {
+                                        const parsed = parseAnalysisForDisplay(result.analysis);
+                                        if (parsed && !parsed.isError && (parsed.data?.is_valid_food !== false)) {
+                                            return (
+                                                <button
+                                                    onClick={prepareLogData}
+                                                    className="flex-1 py-4 bg-green-500 hover:bg-green-600 text-white rounded-2xl font-bold shadow-lg shadow-green-500/20 hover:shadow-green-500/40 transition-all duration-300 flex items-center justify-center gap-2"
+                                                >
+                                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
+                                                    Log This Meal
+                                                </button>
+                                            );
+                                        }
+                                        return null;
+                                    })()}
                                     <button
                                         onClick={resetScanner}
                                         className="flex-1 py-4 bg-white hover:bg-gray-50 text-gray-700 rounded-2xl font-bold shadow-sm border border-gray-200 transition-all duration-300"

@@ -14,7 +14,7 @@ export default function NutritionSearchPage() {
     const [results, setResults] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
-    
+
     // Modal State
     const [showLogModal, setShowLogModal] = useState(false);
     const [selectedFoodForLog, setSelectedFoodForLog] = useState(null);
@@ -96,7 +96,7 @@ export default function NutritionSearchPage() {
             await api.logMeal(formData);
             setShowLogModal(false);
             setSelectedFoodForLog(null);
-            
+
             const successDiv = document.createElement('div');
             successDiv.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-fade-in';
             successDiv.textContent = '✓ Meal logged successfully!';
@@ -126,7 +126,7 @@ export default function NutritionSearchPage() {
         <div className="min-h-screen bg-[#FEF3E2] relative overflow-x-hidden font-sans selection:bg-[#FAB12F] selection:text-white pb-24 pt-28">
             {/* Background Pattern */}
             <div className="fixed inset-0 z-0 opacity-40 pointer-events-none" style={{ backgroundImage: 'radial-gradient(#FAB12F 1px, transparent 1px)', backgroundSize: '24px 24px' }}></div>
-            
+
             {/* Decorative Blobs */}
             <div className="fixed top-0 left-0 w-96 h-96 bg-[#FAB12F]/20 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2 pointer-events-none z-0"></div>
             <div className="fixed bottom-0 right-0 w-96 h-96 bg-[#FA812F]/10 rounded-full blur-3xl translate-x-1/2 translate-y-1/2 pointer-events-none z-0"></div>
@@ -137,7 +137,7 @@ export default function NutritionSearchPage() {
                 {/* Header */}
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
-                        <button 
+                        <button
                             onClick={() => router.back()}
                             className="p-3 rounded-full bg-white/50 hover:bg-white text-gray-600 hover:text-[#FAB12F] transition-all duration-300 shadow-sm border border-white/50 group"
                         >
@@ -298,16 +298,21 @@ export default function NutritionSearchPage() {
                                             </div>
                                         </div>
 
-                                        <button
-                                            onClick={() => openLogModal(item)}
-                                            disabled={item.calories === 0}
-                                            className="w-full py-4 bg-green-500 hover:bg-green-600 text-white rounded-2xl font-bold shadow-lg shadow-green-500/20 hover:shadow-green-500/40 transition-all duration-300 disabled:bg-gray-300 disabled:cursor-not-allowed disabled:shadow-none flex items-center justify-center gap-2"
-                                        >
-                                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                                            </svg>
-                                            Log This Food
-                                        </button>
+                                        <div className="relative group">
+                                            {/* <button
+                                                disabled
+                                                className="w-full py-4 bg-gray-300 text-gray-500 rounded-2xl font-bold cursor-not-allowed flex items-center justify-center gap-2 opacity-60"
+                                            >
+                                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                                                </svg>
+                                                Log This Food
+                                            </button> */}
+                                            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-4 py-2 bg-gray-800 text-white text-sm rounded-xl opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+                                                Logging from nutrition search is currently unavailable
+                                                <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-gray-800"></div>
+                                            </div>
+                                        </div>
                                     </div>
                                 ))}
                             </div>

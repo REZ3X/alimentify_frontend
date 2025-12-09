@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react';
 
-export default function MealModal({ 
-    isOpen, 
-    onClose, 
-    onSubmit, 
-    initialData, 
-    isEditing = false, 
-    onAnalyze, 
-    analyzing = false 
+export default function MealModal({
+    isOpen,
+    onClose,
+    onSubmit,
+    initialData,
+    isEditing = false,
+    onAnalyze,
+    analyzing = false
 }) {
     const [formData, setFormData] = useState({
         meal_type: 'breakfast',
@@ -20,7 +20,7 @@ export default function MealModal({
         serving_size: '',
         notes: '',
     });
-    
+
     const [showManualEntry, setShowManualEntry] = useState(false);
 
     useEffect(() => {
@@ -59,7 +59,7 @@ export default function MealModal({
         if (onAnalyze) {
             try {
                 const result = await onAnalyze(formData.food_name, formData.portion_description);
-                if (result) {
+                if (result && result.is_valid_food !== false) {
                     setFormData(prev => ({
                         ...prev,
                         calories: result.calories || '',
@@ -110,11 +110,10 @@ export default function MealModal({
                                             key={type}
                                             type="button"
                                             onClick={() => handleInputChange({ target: { name: 'meal_type', value: type } })}
-                                            className={`py-3 rounded-xl text-sm font-bold transition-all flex items-center justify-center gap-2 ${
-                                                formData.meal_type === type
+                                            className={`py-3 rounded-xl text-sm font-bold transition-all flex items-center justify-center gap-2 ${formData.meal_type === type
                                                     ? 'bg-[#FAB12F] text-white shadow-md transform scale-105'
                                                     : 'bg-gray-50 text-gray-600 hover:bg-gray-100'
-                                            }`}
+                                                }`}
                                         >
                                             <span className="text-base">
                                                 {type === 'breakfast' && '🍳'}
