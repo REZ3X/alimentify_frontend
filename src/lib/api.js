@@ -1,8 +1,20 @@
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api';
+const getBaseUrl = () => {
+    if (typeof window !== 'undefined') {
+        return '/api/proxy';
+    }
+    return process.env.BACKEND_URL ? `${process.env.BACKEND_URL}/api` : '/api/proxy';
+};
 
 class ApiClient {
     constructor() {
-        this.baseUrl = API_BASE_URL;
+        this.baseUrl = null; 
+    }
+
+    getBaseUrl() {
+        if (!this.baseUrl) {
+            this.baseUrl = getBaseUrl();
+        }
+        return this.baseUrl;
     }
 
     getToken() {
@@ -41,7 +53,7 @@ class ApiClient {
         };
 
         try {
-            const response = await fetch(`${this.baseUrl}${endpoint}`, config);
+            const response = await fetch(`${this.getBaseUrl()}${endpoint}`, config);
 
             const text = await response.text();
 
@@ -99,7 +111,7 @@ class ApiClient {
             headers['Authorization'] = `Bearer ${token}`;
         }
 
-        const response = await fetch(`${this.baseUrl}/nutrition/analyze`, {
+        const response = await fetch(`${this.getBaseUrl()}/nutrition/analyze`, {
             method: 'POST',
             headers,
             body: formData,
@@ -130,7 +142,7 @@ class ApiClient {
             headers['Authorization'] = `Bearer ${token}`;
         }
 
-        const response = await fetch(`${this.baseUrl}/nutrition/quick-check`, {
+        const response = await fetch(`${this.getBaseUrl()}/nutrition/quick-check`, {
             method: 'POST',
             headers,
             body: formData,
