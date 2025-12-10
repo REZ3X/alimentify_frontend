@@ -88,29 +88,45 @@ export default function ProgressPage() {
 
         const targetCalories = healthProfile.daily_calories;
         const daysWithinRange = weeklyData.filter(day => {
-            const consumed = day.daily_totals?.consumed?.calories || 0;
+            const consumed = day.daily_totals?.total_calories || 0;
             if (consumed === 0) return false;
             const diff = Math.abs(consumed - targetCalories);
             return diff <= targetCalories * 0.1;
         }).length;
         const adherence = Math.round((daysWithinRange / weeklyData.length) * 100);
 
-        const avgCalories = Math.round(weeklyData.reduce((sum, day) => sum + (day.daily_totals?.consumed?.calories || 0), 0) / weeklyData.length);
+        const avgCalories = Math.round(weeklyData.reduce((sum, day) => sum + (day.daily_totals?.total_calories || 0), 0) / weeklyData.length);
 
         return { progressPercentage, adherence, avgCalories };
     }, [weeklyData, healthProfile]);
 
     const getWeeklyAverage = (nutrient) => {
         if (!weeklyData.length) return 0;
+        // Map frontend nutrient names to backend field names
+        const fieldMap = {
+            'calories': 'total_calories',
+            'protein_g': 'total_protein_g',
+            'carbs_g': 'total_carbs_g',
+            'fat_g': 'total_fat_g'
+        };
+        const fieldName = fieldMap[nutrient] || `total_${nutrient}`;
         const total = weeklyData.reduce((sum, day) => {
-            return sum + (day.daily_totals?.consumed?.[nutrient] || 0);
+            return sum + (day.daily_totals?.[fieldName] || 0);
         }, 0);
         return Math.round(total / weeklyData.length);
     };
 
     const getMaxValue = (nutrient) => {
         if (!weeklyData.length) return 0;
-        return Math.max(...weeklyData.map(day => day.daily_totals?.consumed?.[nutrient] || 0));
+        // Map frontend nutrient names to backend field names
+        const fieldMap = {
+            'calories': 'total_calories',
+            'protein_g': 'total_protein_g',
+            'carbs_g': 'total_carbs_g',
+            'fat_g': 'total_fat_g'
+        };
+        const fieldName = fieldMap[nutrient] || `total_${nutrient}`;
+        return Math.max(...weeklyData.map(day => day.daily_totals?.[fieldName] || 0));
     };
 
     const getDayName = (dateString) => {
@@ -171,7 +187,7 @@ export default function ProgressPage() {
 
             <Navbar />
 
-            <motion.main 
+            <motion.main
                 variants={containerVariants}
                 initial="hidden"
                 animate="visible"
@@ -199,9 +215,8 @@ export default function ProgressPage() {
                             <button
                                 key={period}
                                 onClick={() => setSelectedPeriod(period)}
-                                className={`relative px-6 py-2.5 rounded-xl font-bold text-sm transition-colors cursor-pointer z-10 ${
-                                    selectedPeriod === period ? 'text-white' : 'text-gray-600 hover:text-gray-900'
-                                }`}
+                                className={`relative px-6 py-2.5 rounded-xl font-bold text-sm transition-colors cursor-pointer z-10 ${selectedPeriod === period ? 'text-white' : 'text-gray-600 hover:text-gray-900'
+                                    }`}
                             >
                                 {selectedPeriod === period && (
                                     <motion.div
@@ -217,7 +232,7 @@ export default function ProgressPage() {
                 </div>
 
                 {error && (
-                    <motion.div 
+                    <motion.div
                         initial={{ opacity: 0, y: -10 }}
                         animate={{ opacity: 1, y: 0 }}
                         className="bg-red-50/80 backdrop-blur-sm text-red-600 p-4 rounded-2xl text-sm font-medium border border-red-100 flex items-center gap-3"
@@ -243,7 +258,7 @@ export default function ProgressPage() {
                                 <span className="text-sm font-medium text-gray-500">logged</span>
                             </div>
                             <div className="mt-3 w-full bg-gray-100 rounded-full h-1.5 overflow-hidden">
-                                <motion.div 
+                                <motion.div
                                     initial={{ width: 0 }}
                                     animate={{ width: `${stats?.progressPercentage || 0}%` }}
                                     transition={{ duration: 1, delay: 0.2 }}
@@ -267,7 +282,7 @@ export default function ProgressPage() {
                                 <span className="text-sm font-medium text-gray-500">on target</span>
                             </div>
                             <div className="mt-3 w-full bg-gray-100 rounded-full h-1.5 overflow-hidden">
-                                <motion.div 
+                                <motion.div
                                     initial={{ width: 0 }}
                                     animate={{ width: `${stats?.adherence || 0}%` }}
                                     transition={{ duration: 1, delay: 0.3 }}
@@ -312,7 +327,7 @@ export default function ProgressPage() {
                             <span className="text-gray-600">Target</span>
                         </div>
                     </div>
-                    
+
                     <div className="relative h-72 w-full">
                         {/* Target Line */}
                         <div className="absolute left-0 right-0 border-t-2 border-dashed border-gray-300 z-0 flex items-center pointer-events-none" style={{ top: '50%' }}>
@@ -325,7 +340,7 @@ export default function ProgressPage() {
                         <div className="overflow-x-auto h-full w-full pb-4 px-2 [&::-webkit-scrollbar]:h-2 [&::-webkit-scrollbar-track]:bg-gray-100/50 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300/80 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:hover:bg-[#FAB12F] [&::-webkit-scrollbar-thumb]:transition-colors cursor-grab active:cursor-grabbing">
                             <div className="flex items-end h-full relative z-10 pt-6" style={{ minWidth: selectedPeriod === 'month' ? '250%' : '100%', gap: selectedPeriod === 'month' ? '16px' : '24px', paddingRight: '16px' }}>
                                 {weeklyData.map((day, index) => {
-                                    const calories = day.daily_totals?.consumed?.calories || 0;
+                                    const calories = day.daily_totals?.total_calories || 0;
                                     const targetCalories = healthProfile.daily_calories;
                                     const maxCalories = Math.max(getMaxValue('calories'), targetCalories * 1.2);
                                     const heightPercent = calories > 0 ? (calories / maxCalories) * 100 : 0;
@@ -339,16 +354,15 @@ export default function ProgressPage() {
                                                     initial={{ height: 0 }}
                                                     animate={{ height: `${heightPercent}%` }}
                                                     transition={{ duration: 0.8, delay: index * 0.05, type: "spring" }}
-                                                    className={`w-full rounded-t-2xl relative overflow-hidden ${
-                                                        calories === 0 ? 'bg-gray-100' : 
-                                                        isCloseToTarget ? 'bg-green-400' : 
-                                                        isOverTarget ? 'bg-red-400' : 'bg-[#FAB12F]'
-                                                    }`}
+                                                    className={`w-full rounded-t-2xl relative overflow-hidden ${calories === 0 ? 'bg-gray-100' :
+                                                            isCloseToTarget ? 'bg-green-400' :
+                                                                isOverTarget ? 'bg-red-400' : 'bg-[#FAB12F]'
+                                                        }`}
                                                     style={{ minHeight: calories > 0 ? '12px' : '4px' }}
                                                 >
                                                     {/* Glass Shine Effect */}
                                                     <div className="absolute inset-0 bg-linear-to-b from-white/30 to-transparent opacity-50"></div>
-                                                    
+
                                                     {/* Tooltip */}
                                                     <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-3 opacity-0 group-hover:opacity-100 transition-all duration-200 pointer-events-none z-20 translate-y-2 group-hover:translate-y-0">
                                                         <div className="bg-gray-900/90 backdrop-blur-md text-white text-xs rounded-xl py-2 px-3 whitespace-nowrap shadow-xl z-50">
@@ -417,7 +431,7 @@ export default function ProgressPage() {
                                 const carbs = getWeeklyAverage('carbs_g');
                                 const fat = getWeeklyAverage('fat_g');
                                 const total = protein * 4 + carbs * 4 + fat * 9;
-                                
+
                                 if (total === 0) {
                                     return (
                                         <div className="text-center text-gray-400 py-8">

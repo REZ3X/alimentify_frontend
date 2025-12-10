@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { api } from '@/lib/api';
+import { notificationManager } from '@/lib/notifications';
 import { useRouter } from 'next/navigation';
 import Navbar from '@/components/Navbar';
 import MealModal from '@/components/MealModal';
@@ -64,7 +65,13 @@ export default function NutritionSearchPage() {
             const response = await api.getNutritionInfo(query);
             setResults(response.data);
         } catch (err) {
-            setError(err.message || 'Failed to get nutrition information');
+            const errorMessage = err.message || 'Failed to get nutrition information';
+            if (errorMessage.includes('unavailable') || errorMessage.includes('service') || errorMessage.includes('503')) {
+                notificationManager.error('🔌 Nutrition service temporarily unavailable. Please try again later.');
+                setResults(null);
+            } else {
+                setError(errorMessage);
+            }
         } finally {
             setLoading(false);
         }

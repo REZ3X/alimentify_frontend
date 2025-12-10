@@ -215,7 +215,7 @@ export default function ReportsPage() {
 
             <Navbar />
 
-            <motion.main 
+            <motion.main
                 variants={containerVariants}
                 initial="hidden"
                 animate="visible"
@@ -242,7 +242,7 @@ export default function ReportsPage() {
                 {/* Alerts */}
                 <AnimatePresence>
                     {error && (
-                        <motion.div 
+                        <motion.div
                             initial={{ opacity: 0, y: -10 }}
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, y: -10 }}
@@ -259,7 +259,7 @@ export default function ReportsPage() {
                     )}
 
                     {success && (
-                        <motion.div 
+                        <motion.div
                             initial={{ opacity: 0, y: -10 }}
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, y: -10 }}
@@ -279,7 +279,7 @@ export default function ReportsPage() {
                 {/* Quick Generate Section */}
                 <motion.div variants={itemVariants} className="bg-white/60 backdrop-blur-xl rounded-4xl p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white/50 relative overflow-hidden">
                     <div className="absolute top-0 right-0 w-64 h-64 bg-[#FAB12F]/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
-                    
+
                     <div className="relative z-10">
                         <h2 className="text-2xl font-black text-gray-900 mb-2 tracking-tight">Quick Generate</h2>
                         <p className="text-gray-500 mb-8 font-medium">Generate a report for a preset period and receive it via email</p>
@@ -315,7 +315,7 @@ export default function ReportsPage() {
                         </div>
 
                         {generating && (
-                            <motion.div 
+                            <motion.div
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
                                 className="mt-6 flex items-center justify-center text-gray-600 font-medium bg-white/50 py-3 rounded-xl border border-white/50"
@@ -357,11 +357,11 @@ export default function ReportsPage() {
 
                     <AnimatePresence>
                         {showCustomForm && (
-                            <motion.form 
+                            <motion.form
                                 initial={{ height: 0, opacity: 0 }}
                                 animate={{ height: 'auto', opacity: 1 }}
                                 exit={{ height: 0, opacity: 0 }}
-                                onSubmit={generateCustomReport} 
+                                onSubmit={generateCustomReport}
                                 className="overflow-hidden"
                             >
                                 <div className="bg-white/40 rounded-3xl p-6 border border-white/50 mb-2">
@@ -372,14 +372,14 @@ export default function ReportsPage() {
                                                 <select
                                                     value={customReportType}
                                                     onChange={(e) => setCustomReportType(e.target.value)}
-                                                    className="w-full px-4 py-3 bg-white/80 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#FAB12F] focus:border-transparent outline-none appearance-none cursor-pointer font-medium"
+                                                    className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#FAB12F] focus:border-transparent outline-none appearance-none cursor-pointer font-medium text-gray-900"
                                                 >
                                                     <option value="daily">Daily</option>
                                                     <option value="weekly">Weekly</option>
                                                     <option value="monthly">Monthly</option>
                                                     <option value="yearly">Yearly</option>
                                                 </select>
-                                                <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-500">
+                                                <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-600">
                                                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
                                                 </div>
                                             </div>
@@ -391,7 +391,7 @@ export default function ReportsPage() {
                                                 type="date"
                                                 value={customStartDate}
                                                 onChange={(e) => setCustomStartDate(e.target.value)}
-                                                className="w-full px-4 py-3 bg-white/80 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#FAB12F] focus:border-transparent outline-none font-medium"
+                                                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#FAB12F] focus:border-transparent outline-none font-medium text-gray-900 [&::-webkit-calendar-picker-indicator]:opacity-70 [&::-webkit-calendar-picker-indicator]:cursor-pointer"
                                                 required
                                             />
                                         </div>
@@ -402,7 +402,7 @@ export default function ReportsPage() {
                                                 type="date"
                                                 value={customEndDate}
                                                 onChange={(e) => setCustomEndDate(e.target.value)}
-                                                className="w-full px-4 py-3 bg-white/80 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#FAB12F] focus:border-transparent outline-none font-medium"
+                                                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#FAB12F] focus:border-transparent outline-none font-medium text-gray-900 [&::-webkit-calendar-picker-indicator]:opacity-70 [&::-webkit-calendar-picker-indicator]:cursor-pointer"
                                                 required
                                             />
                                         </div>
