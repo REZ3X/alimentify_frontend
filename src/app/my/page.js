@@ -1,13 +1,13 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { api } from '@/lib/api';
 import Link from 'next/link';
 import Navbar from '@/components/Navbar';
 
-export default function DashboardPage() {
+function DashboardContent() {
     const { user, loading, logout, login } = useAuth();
     const router = useRouter();
     const searchParams = useSearchParams();
@@ -163,8 +163,8 @@ export default function DashboardPage() {
                                 <div className="flex items-center justify-between mb-4">
                                     <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider">BMI Score</h3>
                                     <span className={`px-3 py-1 rounded-full text-xs font-bold ${healthProfile.bmi_category === 'Normal' ? 'bg-green-100 text-green-700' :
-                                            healthProfile.bmi_category === 'Underweight' ? 'bg-blue-100 text-blue-700' :
-                                                'bg-orange-100 text-orange-700'
+                                        healthProfile.bmi_category === 'Underweight' ? 'bg-blue-100 text-blue-700' :
+                                            'bg-orange-100 text-orange-700'
                                         }`}>
                                         {healthProfile.bmi_category}
                                     </span>
@@ -252,5 +252,24 @@ export default function DashboardPage() {
                 </div>
             </main>
         </div>
+    );
+}
+
+function DashboardLoading() {
+    return (
+        <div className="min-h-screen flex items-center justify-center bg-[#FEF3E2]">
+            <div className="text-center">
+                <div className="w-16 h-16 border-4 border-[#FAB12F] border-t-[#FA812F] rounded-full animate-spin mx-auto mb-4" />
+                <p className="text-gray-600 font-mono">Loading...</p>
+            </div>
+        </div>
+    );
+}
+
+export default function DashboardPage() {
+    return (
+        <Suspense fallback={<DashboardLoading />}>
+            <DashboardContent />
+        </Suspense>
     );
 }
