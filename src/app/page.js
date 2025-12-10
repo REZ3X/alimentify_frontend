@@ -1,13 +1,13 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { api } from '@/lib/api';
 import Link from 'next/link';
 import MobileFeatures from '@/components/MobileFeatures';
 
-export default function LandingPage() {
+function LandingPageContent() {
   const { user, loading, login } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -87,7 +87,7 @@ export default function LandingPage() {
         {/* Hero Section */}
         <div className="grid lg:grid-cols-2 gap-12 items-center mb-24">
           <div className="text-center lg:text-left relative z-10">
-            
+
             <h1 className="text-5xl md:text-7xl font-mono font-bold text-gray-900 mb-8 leading-[1.1] tracking-tight">
               Scan Food,<br />
               <span className="text-[#FA812F] relative inline-block">
@@ -97,11 +97,11 @@ export default function LandingPage() {
                 </svg>
               </span>
             </h1>
-            
+
             <p className="text-xl text-gray-600 mb-10 max-w-lg mx-auto lg:mx-0 leading-relaxed">
               Instantly analyze calories, macros, and health benefits with our advanced AI. Your personal nutritionist in your pocket.
             </p>
-            
+
             <div className="flex flex-row gap-3 sm:gap-4 items-center justify-center lg:justify-start">
               <Link
                 href="/auth/register"
@@ -155,7 +155,7 @@ export default function LandingPage() {
                     {/* Scanning Beam */}
                     <div className="absolute top-0 left-0 right-0 h-0.5 bg-linear-to-r from-transparent via-[#FAB12F] to-transparent shadow-[0_0_20px_#FAB12F] animate-[scan_2s_ease-in-out_infinite]"></div>
                   </div>
-                  
+
                   {/* Floating Tags */}
                   <div className="absolute bottom-8 left-4 right-4 z-30">
                     <div className="bg-linear-to-br from-white/80 via-white/40 to-white/20 backdrop-blur-xl border border-white/50 shadow-[0_8px_32px_0_rgba(0,0,0,0.05)] p-4 rounded-2xl transform transition-all animate-fade-in-up relative overflow-hidden">
@@ -182,7 +182,7 @@ export default function LandingPage() {
           {/* Abstract App Visualization */}
           <div className="relative hidden lg:block h-[600px] w-full">
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-[#FAB12F]/20 rounded-full blur-3xl animate-pulse" />
-            
+
             {/* Phone Frame */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[320px] h-[640px] bg-white rounded-[3rem] border-8 border-gray-900 shadow-2xl overflow-hidden transform rotate-[-5deg] hover:rotate-0 transition-transform duration-500">
               {/* Screen Content */}
@@ -192,12 +192,12 @@ export default function LandingPage() {
                   <div className="w-8 h-8 bg-white/20 rounded-full backdrop-blur-sm" />
                   <div className="w-24 h-4 bg-white/20 rounded-full backdrop-blur-sm" />
                 </div>
-                
+
                 {/* Food Image Placeholder */}
                 <div className="mx-6 -mt-8 h-48 bg-gray-200 rounded-2xl shadow-lg relative overflow-hidden group">
-                   <img src="/images/salad.jpg" alt="Food analysis" className="w-full h-full object-cover" />
-                   {/* Scanning Line */}
-                   <div className="absolute top-0 left-0 w-full h-1 bg-[#FAB12F] shadow-[0_0_15px_#FAB12F] animate-[scan_2s_ease-in-out_infinite]" />
+                  <img src="/images/salad.jpg" alt="Food analysis" className="w-full h-full object-cover" />
+                  {/* Scanning Line */}
+                  <div className="absolute top-0 left-0 w-full h-1 bg-[#FAB12F] shadow-[0_0_15px_#FAB12F] animate-[scan_2s_ease-in-out_infinite]" />
                 </div>
 
                 {/* Stats Cards */}
@@ -234,30 +234,30 @@ export default function LandingPage() {
         {/* Stats Strip */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-8 mb-24">
           {[
-            { 
-              label: "Active Users", 
-              value: "10k+", 
+            {
+              label: "Active Users",
+              value: "10k+",
               icon: (
                 <svg className="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
               )
             },
-            { 
-              label: "Foods Scanned", 
-              value: "500k+", 
+            {
+              label: "Foods Scanned",
+              value: "500k+",
               icon: (
                 <svg className="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
               )
             },
-            { 
-              label: "Accuracy", 
-              value: "99%", 
+            {
+              label: "Accuracy",
+              value: "99%",
               icon: (
                 <svg className="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
               )
             },
-            { 
-              label: "App Rating", 
-              value: "4.9/5", 
+            {
+              label: "App Rating",
+              value: "4.9/5",
               icon: (
                 <svg className="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" /></svg>
               )
@@ -278,7 +278,7 @@ export default function LandingPage() {
 
         {/* Features Section */}
         <MobileFeatures />
-        
+
         <div id="features" className="hidden md:block relative py-24 bg-white rounded-[3rem] shadow-xl shadow-[#FAB12F]/5 mx-4 md:mx-0 mb-32">
           {/* Decorative blobs - Wrapped to prevent overflow issues with sticky */}
           <div className="absolute inset-0 overflow-hidden rounded-[3rem] pointer-events-none">
@@ -294,7 +294,7 @@ export default function LandingPage() {
                 Advanced technology meets simple design to help you achieve your health goals.
               </p>
             </div>
-            
+
             {/* Desktop Grid View */}
             <div className="grid md:grid-cols-3 gap-8">
               {[
@@ -353,14 +353,14 @@ export default function LandingPage() {
               From photo to nutritional facts in seconds.
             </p>
           </div>
-          
+
           <div className="max-w-6xl mx-auto px-4">
             <div className="grid md:grid-cols-3 gap-12 relative">
               {/* Connecting Line (Desktop) */}
               <div className="hidden md:block absolute top-12 left-[16%] right-[16%] h-0.5 bg-linear-to-r from-[#FAB12F]/20 via-[#FAB12F] to-[#FAB12F]/20 border-t-2 border-dashed border-[#FAB12F] -z-10"></div>
               {/* Connecting Line (Mobile) */}
               <div className="md:hidden absolute top-12 bottom-12 left-1/2 w-0.5 bg-linear-to-b from-[#FAB12F]/20 via-[#FAB12F] to-[#FAB12F]/20 border-l-2 border-dashed border-[#FAB12F] -z-10 -translate-x-1/2"></div>
-              
+
               {[
                 { step: "01", title: "Capture", desc: "Take a photo of your food using our smart camera." },
                 { step: "02", title: "Analyze", desc: "AI identifies ingredients and calculates nutrition." },
@@ -373,7 +373,7 @@ export default function LandingPage() {
                     <div className="absolute inset-0 rounded-full border border-[#FAB12F]/30 animate-[spin_4s_linear_infinite]" />
                     <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-[#FAB12F] rounded-full" />
                   </div>
-                  
+
                   <div className="bg-white p-8 rounded-3xl shadow-sm border border-[#FAB12F]/10 w-full hover:shadow-xl transition-all duration-300 hover:-translate-y-2">
                     <h3 className="text-xl font-mono font-bold text-gray-900 mb-3">{item.title}</h3>
                     <p className="text-gray-600 leading-relaxed">{item.desc}</p>
@@ -388,10 +388,10 @@ export default function LandingPage() {
         <div className="relative overflow-hidden rounded-4xl md:rounded-[3rem] bg-[#FA812F] shadow-2xl mx-4 md:mx-0 mb-12">
           <div className="absolute top-0 right-0 w-64 h-64 md:w-96 md:h-96 bg-[#FAB12F] rounded-full blur-3xl opacity-40 -translate-y-1/2 translate-x-1/2 animate-pulse" />
           <div className="absolute bottom-0 left-0 w-64 h-64 md:w-96 md:h-96 bg-[#FAB12F] rounded-full blur-3xl opacity-40 translate-y-1/2 -translate-x-1/2 animate-pulse delay-700" />
-          
+
           {/* Pattern Overlay */}
           <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(white 1px, transparent 1px)', backgroundSize: '30px 30px' }}></div>
-          
+
           <div className="relative p-8 md:p-24 text-center z-10">
             <h2 className="text-3xl md:text-6xl font-mono font-bold text-white mb-6 md:mb-8 tracking-tight">Ready to Eat Smarter?</h2>
             <p className="text-lg md:text-xl text-white/90 mb-8 md:mb-12 max-w-2xl mx-auto font-medium">
@@ -418,7 +418,7 @@ export default function LandingPage() {
       <footer className="bg-white relative pt-24 pb-12 mt-24 overflow-hidden">
         {/* Decorative Top Border/Gradient */}
         <div className="absolute top-0 left-0 right-0 h-1 bg-linear-to-r from-transparent via-[#FAB12F]/20 to-transparent"></div>
-        
+
         {/* Background Blobs */}
         <div className="absolute top-0 left-0 w-64 h-64 bg-[#FEF3E2] rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2 opacity-50 pointer-events-none"></div>
         <div className="absolute bottom-0 right-0 w-64 h-64 bg-[#FAB12F]/5 rounded-full blur-3xl translate-x-1/2 translate-y-1/2 pointer-events-none"></div>
@@ -434,7 +434,7 @@ export default function LandingPage() {
                 <h1 className="text-2xl font-mono font-bold text-gray-900 tracking-tight">Alimentify</h1>
               </div>
               <p className="text-gray-500 leading-relaxed mb-8 max-w-md">
-                Empowering your health journey with AI-driven nutrition analysis. 
+                Empowering your health journey with AI-driven nutrition analysis.
                 We believe that understanding what you eat is the first step to a healthier life.
               </p>
               <div className="flex gap-4">
@@ -495,5 +495,24 @@ export default function LandingPage() {
         </div>
       </footer>
     </div>
+  );
+}
+
+function LandingLoading() {
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-[#FEF3E2]">
+      <div className="text-center">
+        <div className="w-16 h-16 border-4 border-[#FAB12F] border-t-[#FA812F] rounded-full animate-spin mx-auto mb-4" />
+        <p className="text-[#FA812F] font-mono">Loading...</p>
+      </div>
+    </div>
+  );
+}
+
+export default function LandingPage() {
+  return (
+    <Suspense fallback={<LandingLoading />}>
+      <LandingPageContent />
+    </Suspense>
   );
 }
