@@ -5,6 +5,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { api } from '@/lib/api';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
+import MarkdownRenderer from '@/components/MarkdownRenderer';
 
 // Custom Select Component with Glassmorphism
 const CustomSelect = ({ label, name, value, options, onChange, required, icon }) => {
@@ -135,8 +136,51 @@ export default function HealthSurveyPage() {
 
     if (!user) return null;
 
+    const validateProfileData = () => {
+        const errors = [];
+
+        if (formData.age < 13) {
+            errors.push('Age must be at least 13 years old to use this service.');
+        }
+        if (formData.age > 120) {
+            errors.push('Please enter a valid age (maximum 120 years).');
+        }
+
+        if (formData.height_cm < 50) {
+            errors.push('Height seems too low. Please enter a valid height in centimeters (minimum 50cm).');
+        }
+        if (formData.height_cm > 280) {
+            errors.push('Height seems too high. Please enter a valid height in centimeters (maximum 280cm).');
+        }
+
+        if (formData.weight_kg < 20) {
+            errors.push('Weight seems too low. Please enter a valid weight in kilograms (minimum 20kg).');
+        }
+        if (formData.weight_kg > 500) {
+            errors.push('Weight seems too high. Please enter a valid weight in kilograms (maximum 500kg).');
+        }
+
+        if (formData.height_cm && formData.weight_kg) {
+            const heightM = formData.height_cm / 100;
+            const bmi = formData.weight_kg / (heightM * heightM);
+            if (bmi < 10 || bmi > 100) {
+                errors.push('The combination of height and weight seems unrealistic. Please verify your measurements.');
+            }
+        }
+
+        return errors;
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        const validationErrors = validateProfileData();
+        if (validationErrors.length > 0) {
+            setError(validationErrors.join(' '));
+            window.scrollTo(0, 0);
+            return;
+        }
+
         setLoading(true);
         setError(null);
 
@@ -162,6 +206,17 @@ export default function HealthSurveyPage() {
         } finally {
             setLoading(false);
         }
+    };
+
+    const validateStep1 = () => {
+        const errors = validateProfileData();
+        if (errors.length > 0) {
+            setError(errors.join(' '));
+            window.scrollTo(0, 0);
+            return false;
+        }
+        setError(null);
+        return true;
     };
 
     const updateField = (field, value) => {
@@ -214,7 +269,7 @@ export default function HealthSurveyPage() {
                 )}
 
                 {error && (
-                    <motion.div 
+                    <motion.div
                         initial={{ opacity: 0, y: -10 }}
                         animate={{ opacity: 1, y: 0 }}
                         className="bg-red-50/80 backdrop-blur-md border border-red-200 text-red-700 px-6 py-4 rounded-2xl mb-6 shadow-sm max-w-2xl mx-auto"
@@ -343,7 +398,11 @@ export default function HealthSurveyPage() {
                                 <div className="mt-10 flex justify-end">
                                     <button
                                         type="button"
-                                        onClick={() => setStep(2)}
+                                        onClick={() => {
+                                            if (validateStep1()) {
+                                                setStep(2);
+                                            }
+                                        }}
                                         className="px-10 py-4 bg-linear-to-r from-[#FAB12F] to-[#FA812F] text-white rounded-2xl hover:shadow-lg hover:shadow-orange-500/30 transition-all font-bold tracking-wide transform hover:-translate-y-0.5"
                                     >
                                         Continue
@@ -532,7 +591,7 @@ export default function HealthSurveyPage() {
                                 <div className="space-y-6 mb-8">
                                     <div className="bg-white/40 rounded-3xl p-8 border border-white/50 relative overflow-hidden group hover:shadow-lg transition-all duration-500">
                                         <div className="absolute top-0 right-0 w-32 h-32 bg-[#FAB12F]/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
-                                        
+
                                         <div className="flex items-center gap-4 mb-6 border-b border-gray-200/50 pb-4">
                                             <div className="w-12 h-12 bg-[#FAB12F] rounded-2xl flex items-center justify-center text-2xl shadow-lg shadow-orange-500/20 text-white">
                                                 📋
@@ -704,14 +763,12 @@ export default function HealthSurveyPage() {
                                     <div className="bg-white/60 backdrop-blur-xl rounded-[2.5rem] shadow-xl p-8 border border-white/50 relative overflow-hidden">
                                         <div className="absolute top-0 right-0 w-64 h-64 bg-linear-to-br from-[#FAB12F]/10 to-transparent rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
                                         <h3 className="text-xl font-mono font-bold text-gray-900 mb-6 flex items-center gap-3 relative z-10">
-                                            <span className="w-10 h-10 rounded-xl bg-linear-to-br from-[#FAB12F] to-[#FA812F] text-white flex items-center justify-center text-xl shadow-lg shadow-orange-500/20">🤖</span> 
+                                            <span className="w-10 h-10 rounded-xl bg-linear-to-br from-[#FAB12F] to-[#FA812F] text-white flex items-center justify-center text-xl shadow-lg shadow-orange-500/20">🤖</span>
                                             AI Recommendations
                                         </h3>
                                         <div className="prose max-w-none relative z-10">
                                             <div className="bg-white/50 p-8 rounded-3xl border border-white/60 shadow-sm">
-                                                <pre className="whitespace-pre-wrap text-sm text-gray-700 font-medium font-sans leading-relaxed">
-                                                    {result.ai_recommendations}
-                                                </pre>
+                                                <MarkdownRenderer content={result.ai_recommendations} />
                                             </div>
                                         </div>
                                     </div>

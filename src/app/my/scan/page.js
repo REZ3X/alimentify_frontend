@@ -7,6 +7,7 @@ import { api } from '@/lib/api';
 import { notificationManager } from '@/lib/notifications';
 import Navbar from '@/components/Navbar';
 import MealModal from '@/components/MealModal';
+import { checkFoodForAllergens, formatAllergenWarning } from '@/lib/allergyChecker';
 
 export default function FoodScannerPage() {
     const { user, loading: authLoading } = useAuth();
@@ -18,6 +19,7 @@ export default function FoodScannerPage() {
     const [analyzing, setAnalyzing] = useState(false);
     const [result, setResult] = useState(null);
     const [error, setError] = useState(null);
+    const [userAllergies, setUserAllergies] = useState([]);
 
     // Camera State
     const fileInputRef = useRef(null);
@@ -41,6 +43,22 @@ export default function FoodScannerPage() {
             router.push('/auth/login');
         }
     }, [user, authLoading, router]);
+
+    useEffect(() => {
+        const fetchUserAllergies = async () => {
+            try {
+                const profile = await api.getHealthProfile();
+                if (profile && profile.allergies) {
+                    setUserAllergies(profile.allergies);
+                }
+            } catch (err) {
+                console.log('No health profile found');
+            }
+        };
+        if (user) {
+            fetchUserAllergies();
+        }
+    }, [user]);
 
     // Mobile Check
     useEffect(() => {
@@ -250,6 +268,37 @@ export default function FoodScannerPage() {
         stopCamera();
     };
 
+    const extractCleanNotes = (parsedData) => {
+        const noteParts = [];
+
+        if (parsedData.health_notes) {
+            noteParts.push(parsedData.health_notes);
+        }
+
+        if (parsedData.recommendations) {
+            noteParts.push(`Recommendations: ${parsedData.recommendations}`);
+        }
+
+        if (parsedData.health_score) {
+            noteParts.push(`Health Score: ${parsedData.health_score}/10`);
+        }
+
+        if (parsedData.dietary_info) {
+            const dietInfo = [];
+            if (parsedData.dietary_info.is_vegetarian) dietInfo.push('Vegetarian');
+            if (parsedData.dietary_info.is_vegan) dietInfo.push('Vegan');
+            if (parsedData.dietary_info.is_gluten_free) dietInfo.push('Gluten-Free');
+            if (dietInfo.length > 0) {
+                noteParts.push(`Dietary: ${dietInfo.join(', ')}`);
+            }
+            if (parsedData.dietary_info.allergens && parsedData.dietary_info.allergens.length > 0) {
+                noteParts.push(`Contains allergens: ${parsedData.dietary_info.allergens.join(', ')}`);
+            }
+        }
+
+        return noteParts.join('\n\n');
+    };
+
     const prepareLogData = () => {
         if (!result) return;
 
@@ -297,7 +346,7 @@ export default function FoodScannerPage() {
             fat = analysis.match(/(?:fat)[:\s]+(\d+(?:\.\d+)?)\s*g/i)?.[1] || '';
         }
 
-        notes = result.analysis || '';
+        notes = extractCleanNotes(parsedData);
 
         setScannedMealData({
             meal_type: 'breakfast', // Default
@@ -315,6 +364,18 @@ export default function FoodScannerPage() {
 
     const handleLogMeal = async (formData) => {
         try {
+            if (userAllergies.length > 0) {
+                const allergenCheck = checkFoodForAllergens(formData.food_name, userAllergies);
+                if (allergenCheck.hasAllergen) {
+                    const warningMessage = formatAllergenWarning(allergenCheck.matchedAllergens, allergenCheck.matchedKeywords);
+                    const confirmed = window.confirm(warningMessage);
+                    if (!confirmed) {
+                        notificationManager.info('Meal logging cancelled due to allergy concerns.');
+                        return;
+                    }
+                }
+            }
+
             const mealData = {
                 ...formData,
                 calories: parseFloat(formData.calories) || 0,
