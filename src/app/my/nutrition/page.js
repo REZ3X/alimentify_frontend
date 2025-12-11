@@ -7,6 +7,7 @@ import { notificationManager } from '@/lib/notifications';
 import { useRouter } from 'next/navigation';
 import Navbar from '@/components/Navbar';
 import MealModal from '@/components/MealModal';
+import { checkFoodForAllergens, formatAllergenWarning } from '@/lib/allergyChecker';
 
 export default function NutritionSearchPage() {
     const { user, loading: authLoading } = useAuth();
@@ -15,6 +16,7 @@ export default function NutritionSearchPage() {
     const [results, setResults] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const [userAllergies, setUserAllergies] = useState([]);
 
     // Modal State
     const [showLogModal, setShowLogModal] = useState(false);
@@ -36,6 +38,22 @@ export default function NutritionSearchPage() {
             loadPopularFoods();
         }
     }, [user, authLoading, router]);
+
+    useEffect(() => {
+        const fetchUserAllergies = async () => {
+            try {
+                const profile = await api.getHealthProfile();
+                if (profile && profile.allergies) {
+                    setUserAllergies(profile.allergies);
+                }
+            } catch (err) {
+                console.log('No health profile found');
+            }
+        };
+        if (user) {
+            fetchUserAllergies();
+        }
+    }, [user]);
 
     const loadPopularFoods = async () => {
         const popularSearches = ['apple', 'chicken breast', 'rice', 'banana', 'salmon', 'broccoli'];
@@ -100,6 +118,18 @@ export default function NutritionSearchPage() {
 
     const handleLogMeal = async (formData) => {
         try {
+            if (userAllergies.length > 0) {
+                const allergenCheck = checkFoodForAllergens(formData.food_name, userAllergies);
+                if (allergenCheck.hasAllergen) {
+                    const warningMessage = formatAllergenWarning(allergenCheck.matchedAllergens, allergenCheck.matchedKeywords);
+                    const confirmed = window.confirm(warningMessage);
+                    if (!confirmed) {
+                        notificationManager.info('Meal logging cancelled due to allergy concerns.');
+                        return;
+                    }
+                }
+            }
+
             await api.logMeal(formData);
             setShowLogModal(false);
             setSelectedFoodForLog(null);
