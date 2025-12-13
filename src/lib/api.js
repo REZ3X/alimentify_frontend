@@ -7,7 +7,7 @@ const getBaseUrl = () => {
 
 class ApiClient {
     constructor() {
-        this.baseUrl = null; 
+        this.baseUrl = null;
     }
 
     getBaseUrl() {
@@ -278,6 +278,62 @@ class ApiClient {
         return this.request(`/reports/${reportId}`, {
             method: 'DELETE',
         });
+    }
+
+    async get(endpoint) {
+        return this.request(endpoint, {
+            method: 'GET',
+        });
+    }
+
+    async post(endpoint, data) {
+        return this.request(endpoint, {
+            method: 'POST',
+            body: JSON.stringify(data),
+        });
+    }
+
+    async put(endpoint, data) {
+        return this.request(endpoint, {
+            method: 'PUT',
+            body: JSON.stringify(data),
+        });
+    }
+
+    async delete(endpoint) {
+        return this.request(endpoint, {
+            method: 'DELETE',
+        });
+    }
+
+    async createChatSession(initialMessage = null) {
+        const payload = initialMessage ? { initial_message: initialMessage } : {};
+        return this.post('/chat/sessions', payload);
+    }
+
+    async getChatSessions() {
+        return this.get('/chat/sessions');
+    }
+
+    async getChatSession(sessionId) {
+        return this.get(`/chat/sessions/${sessionId}`);
+    }
+
+    async deleteChatSession(sessionId) {
+        return this.delete(`/chat/sessions/${sessionId}`);
+    }
+
+    async sendChatMessage(sessionId, message, imageData = null, mimeType = null) {
+        const payload = { message };
+        if (imageData) {
+            payload.image_data = imageData;
+            payload.mime_type = mimeType;
+        }
+        return this.post(`/chat/sessions/${sessionId}/messages`, payload);
+    }
+
+    async getChatMessages(sessionId) {
+        return this.get(`/chat/sessions/${sessionId}/messages`);
     }
 }
 
