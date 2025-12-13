@@ -222,11 +222,11 @@ function LandingPageContent() {
             </div>
 
             {/* Floating Elements */}
-            <div className="absolute top-20 right-20 bg-white p-4 rounded-2xl shadow-xl animate-bounce delay-100">
-              <span className="text-2xl">🥑</span>
+            <div className="absolute top-20 right-20 z-20">
+              <img src="/assets/transparent/alpukat.png" alt="Healthy Fat" className="w-32 h-32 object-contain drop-shadow-xl" />
             </div>
-            <div className="absolute bottom-40 left-10 bg-white p-4 rounded-2xl shadow-xl animate-bounce delay-300">
-              <span className="text-2xl">🍎</span>
+            <div className="absolute bottom-40 left-10 -z-10 blur-[2px] opacity-60 grayscale-[20%]">
+              <img src="/assets/transparent/tomat.png" alt="Fresh Veggie" className="w-28 h-28 object-contain drop-shadow-lg" />
             </div>
           </div>
         </div>
@@ -346,6 +346,29 @@ function LandingPageContent() {
 
         {/* How It Works */}
         <div className="mb-32 relative">
+          {/* Mobile Decorative Elements */}
+          <div className="md:hidden absolute inset-0 pointer-events-none overflow-hidden">
+            {/* Top Left - Front (Clear) */}
+            <div className="absolute top-60 -left-4 z-20">
+              <img src="/assets/transparent/jambu-biji.png" alt="" className="w-20 h-20 object-contain rotate-12 drop-shadow-lg" />
+            </div>
+            
+            {/* Top Right - Back (Blur) */}
+            <div className="absolute top-64 -right-8 -z-10 opacity-40 blur-[2px]">
+              <img src="/assets/transparent/kol.png" alt="" className="w-28 h-28 object-contain -rotate-12" />
+            </div>
+
+            {/* Bottom Left - Back (Blur) */}
+            <div className="absolute bottom-64 -left-8 -z-10 opacity-40 blur-[2px]">
+              <img src="/assets/transparent/brokoli.png" alt="" className="w-24 h-24 object-contain rotate-45" />
+            </div>
+
+            {/* Bottom Right - Front (Clear) */}
+            <div className="absolute bottom-20 -right-4 z-20">
+              <img src="/assets/transparent/wortel.png" alt="" className="w-24 h-24 object-contain -rotate-12 drop-shadow-lg" />
+            </div>
+          </div>
+
           <div className="text-center mb-20">
             <span className="text-[#FA812F] font-mono font-bold tracking-wider uppercase text-sm mb-2 block">Workflow</span>
             <h2 className="text-4xl md:text-5xl font-mono font-bold text-gray-900 mb-6">Simple Steps to Health</h2>

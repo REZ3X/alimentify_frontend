@@ -219,29 +219,115 @@ function DashboardContent() {
                         Quick Actions
                     </h2>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
                         {[
-                            { href: '/my/meals', title: 'Track Meals', desc: 'Log your daily food intake', icon: '🍽️', color: 'bg-green-100 text-green-600' },
-                            { href: '/my/scan', title: 'AI Food Scan', desc: 'Analyze food with AI camera', icon: '📸', color: 'bg-indigo-100 text-indigo-600' },
-                            { href: '/my/nutrition', title: 'Nutrition Search', desc: 'Search global food database', icon: '🔍', color: 'bg-blue-100 text-blue-600' },
-                            { href: '/my/recipes', title: 'Healthy Recipes', desc: 'Discover nutritious meal ideas', icon: '🥗', color: 'bg-orange-100 text-orange-600' },
-                            { href: '/my/food-wiki', title: 'Food Wiki', desc: 'Explore USDA food data', icon: '📚', color: 'bg-yellow-100 text-yellow-600' },
-                            { href: '/my/progress', title: 'View Progress', desc: 'Check your analytics & charts', icon: '📈', color: 'bg-purple-100 text-purple-600' },
-                            { href: '/my/reports', title: 'Nutrition Reports', desc: 'Generate & view reports', icon: '📊', color: 'bg-teal-100 text-teal-600' },
+                            { 
+                                href: '/my/meals', 
+                                title: 'Track Meals', 
+                                desc: 'Log your daily food intake', 
+                                icon: (
+                                    <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                                    </svg>
+                                ),
+                                color: 'bg-green-100 text-green-600',
+                                className: 'lg:col-span-2 lg:row-span-2',
+                                isLarge: true
+                            },
+                            { 
+                                href: '/my/scan', 
+                                title: 'AI Food Scan', 
+                                desc: 'Analyze food with AI camera', 
+                                icon: (
+                                    <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    </svg>
+                                ),
+                                color: 'bg-indigo-100 text-indigo-600',
+                                className: 'lg:col-span-1'
+                            },
+                            { 
+                                href: '/my/nutrition', 
+                                title: 'Nutrition Search', 
+                                desc: 'Search global food database', 
+                                icon: (
+                                    <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                    </svg>
+                                ),
+                                color: 'bg-blue-100 text-blue-600',
+                                className: 'lg:col-span-1'
+                            },
+                            { 
+                                href: '/my/recipes', 
+                                title: 'Healthy Recipes', 
+                                desc: 'Discover nutritious meal ideas', 
+                                icon: (
+                                    <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                                    </svg>
+                                ),
+                                color: 'bg-orange-100 text-orange-600',
+                                className: 'lg:col-span-1'
+                            },
+                            { 
+                                href: '/my/food-wiki', 
+                                title: 'Food Wiki', 
+                                desc: 'Explore USDA food data', 
+                                icon: (
+                                    <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+                                    </svg>
+                                ),
+                                color: 'bg-yellow-100 text-yellow-600',
+                                className: 'lg:col-span-1'
+                            },
+                            { 
+                                href: '/my/progress', 
+                                title: 'View Progress', 
+                                desc: 'Check your analytics & charts', 
+                                icon: (
+                                    <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                                    </svg>
+                                ),
+                                color: 'bg-purple-100 text-purple-600',
+                                className: 'lg:col-span-2'
+                            },
+                            { 
+                                href: '/my/reports', 
+                                title: 'Nutrition Reports', 
+                                desc: 'Generate & view reports', 
+                                icon: (
+                                    <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                    </svg>
+                                ),
+                                color: 'bg-teal-100 text-teal-600',
+                                className: 'lg:col-span-2'
+                            },
                         ].map((action, idx) => (
                             <Link
                                 key={idx}
                                 href={action.href}
-                                className="group bg-white/80 backdrop-blur-xl border border-white/50 rounded-4xl p-6 hover:shadow-[0_8px_30px_rgb(0,0,0,0.06)] hover:border-[#FAB12F]/50 transition-all duration-300 flex items-center gap-6"
+                                className={`group bg-white/80 backdrop-blur-xl border border-white/50 rounded-4xl p-6 hover:shadow-[0_8px_30px_rgb(0,0,0,0.06)] hover:border-[#FAB12F]/50 transition-all duration-300 relative overflow-hidden ${action.className || ''} ${action.isLarge ? 'flex flex-col justify-between' : 'flex items-center gap-6'}`}
                             >
-                                <div className={`w-16 h-16 ${action.color} rounded-2xl flex items-center justify-center text-3xl shadow-sm group-hover:scale-110 transition-transform duration-300`}>
-                                    {action.icon}
+                                {/* Decorative background for all cards on hover */}
+                                <div className={`absolute -right-4 -bottom-4 w-32 h-32 ${action.color.split(' ')[0]} rounded-full blur-3xl opacity-0 group-hover:opacity-20 transition-opacity duration-500`}></div>
+
+                                <div className={`${action.isLarge ? 'mb-4' : ''} relative z-10`}>
+                                    <div className={`w-16 h-16 ${action.color} rounded-2xl flex items-center justify-center text-3xl shadow-sm group-hover:scale-110 transition-transform duration-300 ${action.isLarge ? 'w-20 h-20 mb-6' : ''}`}>
+                                        {action.icon}
+                                    </div>
                                 </div>
-                                <div>
-                                    <h4 className="text-lg font-bold text-gray-900 group-hover:text-[#FA812F] transition-colors">{action.title}</h4>
-                                    <p className="text-sm text-gray-500 mt-1">{action.desc}</p>
+                                
+                                <div className="relative z-10 flex-1">
+                                    <h4 className={`font-bold text-gray-900 group-hover:text-[#FA812F] transition-colors ${action.isLarge ? 'text-2xl mb-2' : 'text-lg'}`}>{action.title}</h4>
+                                    <p className={`text-gray-500 ${action.isLarge ? 'text-base' : 'text-sm mt-1'}`}>{action.desc}</p>
                                 </div>
-                                <div className="ml-auto opacity-0 group-hover:opacity-100 transform translate-x-2 group-hover:translate-x-0 transition-all duration-300">
+
+                                <div className={`opacity-0 group-hover:opacity-100 transform translate-x-2 group-hover:translate-x-0 transition-all duration-300 ${action.isLarge ? 'absolute top-8 right-8' : 'ml-auto'}`}>
                                     <svg className="w-6 h-6 text-[#FAB12F]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                                     </svg>
