@@ -1,6 +1,7 @@
 import { Space_Mono, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/contexts/AuthContext";
+import ChatBubble from "@/components/ChatBubble";
 
 const spaceMono = Space_Mono({
   weight: ['400', '700'],
@@ -26,6 +27,7 @@ export default function RootLayout({ children }) {
       >
         <AuthProvider>
           {children}
+          <ChatBubble />
         </AuthProvider>
       </body>
     </html>
