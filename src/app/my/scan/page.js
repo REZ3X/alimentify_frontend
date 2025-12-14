@@ -271,7 +271,7 @@ export default function FoodScannerPage() {
                 setResult(null);
                 setError(null);
                 stopCamera();
-            }, 'image/jpeg', 0.9);
+            }, 'image/jpeg', 0.8);
         }
     };
 
