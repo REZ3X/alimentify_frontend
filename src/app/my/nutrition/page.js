@@ -176,7 +176,7 @@ export default function NutritionSearchPage() {
                     <div className="flex items-center gap-4">
                         <button
                             onClick={() => router.back()}
-                            className="p-3 rounded-full bg-white/50 hover:bg-white text-gray-600 hover:text-[#FAB12F] transition-all duration-300 shadow-sm border border-white/50 group"
+                            className="p-3 rounded-full bg-white/50 hover:bg-white text-gray-600 hover:text-[#FAB12F] transition-all duration-300 shadow-sm border border-white/50 group cursor-pointer"
                         >
                             <svg className="w-5 h-5 transform group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -211,7 +211,7 @@ export default function NutritionSearchPage() {
                                 <button
                                     type="submit"
                                     disabled={loading || !searchQuery.trim()}
-                                    className="w-full py-4 bg-linear-to-r from-[#FAB12F] to-[#FA812F] text-white rounded-2xl font-bold shadow-lg shadow-[#FAB12F]/20 hover:shadow-[#FAB12F]/40 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-2"
+                                    className="w-full py-4 bg-linear-to-r from-[#FAB12F] to-[#FA812F] text-white rounded-2xl font-bold shadow-lg shadow-[#FAB12F]/20 hover:shadow-[#FAB12F]/40 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-2 cursor-pointer"
                                 >
                                     {loading ? (
                                         <>
@@ -234,7 +234,7 @@ export default function NutritionSearchPage() {
                                         <button
                                             key={index}
                                             onClick={() => loadNutritionInfo(suggestion)}
-                                            className="px-4 py-2 text-sm bg-white/50 text-gray-600 rounded-xl hover:bg-[#FAB12F]/10 hover:text-[#FAB12F] border border-white/50 transition-all duration-200"
+                                            className="px-4 py-2 text-sm bg-white/50 text-gray-600 rounded-xl hover:bg-[#FAB12F]/10 hover:text-[#FAB12F] border border-white/50 transition-all duration-200 cursor-pointer"
                                         >
                                             {suggestion}
                                         </button>
@@ -251,7 +251,7 @@ export default function NutritionSearchPage() {
                                         <strong>Need more details?</strong>
                                         <button
                                             onClick={navigateToFoodWiki}
-                                            className="block mt-1 text-blue-600 hover:text-blue-800 underline font-medium"
+                                            className="block mt-1 text-blue-600 hover:text-blue-800 underline font-medium cursor-pointer"
                                         >
                                             Check Food Wiki
                                         </button>

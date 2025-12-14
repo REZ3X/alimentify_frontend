@@ -233,7 +233,7 @@ export default function NotificationsPage() {
                             {permission !== 'granted' && permission !== 'denied' && (
                                 <button
                                     onClick={handleRequestPermission}
-                                    className="flex-1 md:flex-none px-6 py-3 bg-green-500 hover:bg-green-600 text-white rounded-2xl font-bold transition-all shadow-lg shadow-green-500/30 whitespace-nowrap"
+                                    className="flex-1 md:flex-none px-6 py-3 bg-green-500 hover:bg-green-600 text-white rounded-2xl font-bold transition-all shadow-lg shadow-green-500/30 whitespace-nowrap cursor-pointer"
                                 >
                                     Enable Now
                                 </button>
@@ -241,7 +241,7 @@ export default function NotificationsPage() {
                             {permission === 'granted' && (
                                 <button
                                     onClick={handleTestNotification}
-                                    className="flex-1 md:flex-none px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-2xl font-bold transition-all shadow-lg shadow-blue-500/30 whitespace-nowrap"
+                                    className="flex-1 md:flex-none px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-2xl font-bold transition-all shadow-lg shadow-blue-500/30 whitespace-nowrap cursor-pointer"
                                 >
                                     Test Alert
                                 </button>
@@ -270,7 +270,7 @@ export default function NotificationsPage() {
                             </div>
                             <button
                                 onClick={() => handleToggleSetting('enabled')}
-                                className={`relative inline-flex h-8 w-14 items-center rounded-full transition-colors duration-300 focus:outline-none ${settings.enabled ? 'bg-green-500' : 'bg-gray-300'}`}
+                                className={`relative inline-flex h-8 w-14 items-center rounded-full transition-colors duration-300 focus:outline-none cursor-pointer ${settings.enabled ? 'bg-green-500' : 'bg-gray-300'}`}
                             >
                                 <span className={`inline-block h-6 w-6 transform rounded-full bg-white shadow-md transition-transform duration-300 ${settings.enabled ? 'translate-x-7' : 'translate-x-1'}`} />
                             </button>
@@ -290,7 +290,7 @@ export default function NotificationsPage() {
                             <button
                                 onClick={() => handleToggleSetting('mealReminders')}
                                 disabled={!settings.enabled}
-                                className={`relative inline-flex h-8 w-14 items-center rounded-full transition-colors duration-300 focus:outline-none ${settings.mealReminders && settings.enabled ? 'bg-blue-500' : 'bg-gray-300'}`}
+                                className={`relative inline-flex h-8 w-14 items-center rounded-full transition-colors duration-300 focus:outline-none cursor-pointer ${settings.mealReminders && settings.enabled ? 'bg-blue-500' : 'bg-gray-300'}`}
                             >
                                 <span className={`inline-block h-6 w-6 transform rounded-full bg-white shadow-md transition-transform duration-300 ${settings.mealReminders && settings.enabled ? 'translate-x-7' : 'translate-x-1'}`} />
                             </button>
@@ -310,7 +310,7 @@ export default function NotificationsPage() {
                             <button
                                 onClick={() => handleToggleSetting('dailySummary')}
                                 disabled={!settings.enabled}
-                                className={`relative inline-flex h-8 w-14 items-center rounded-full transition-colors duration-300 focus:outline-none ${settings.dailySummary && settings.enabled ? 'bg-purple-500' : 'bg-gray-300'}`}
+                                className={`relative inline-flex h-8 w-14 items-center rounded-full transition-colors duration-300 focus:outline-none cursor-pointer ${settings.dailySummary && settings.enabled ? 'bg-purple-500' : 'bg-gray-300'}`}
                             >
                                 <span className={`inline-block h-6 w-6 transform rounded-full bg-white shadow-md transition-transform duration-300 ${settings.dailySummary && settings.enabled ? 'translate-x-7' : 'translate-x-1'}`} />
                             </button>
@@ -330,7 +330,7 @@ export default function NotificationsPage() {
                             <button
                                 onClick={() => handleToggleSetting('achievements')}
                                 disabled={!settings.enabled}
-                                className={`relative inline-flex h-8 w-14 items-center rounded-full transition-colors duration-300 focus:outline-none ${settings.achievements && settings.enabled ? 'bg-[#FAB12F]' : 'bg-gray-300'}`}
+                                className={`relative inline-flex h-8 w-14 items-center rounded-full transition-colors duration-300 focus:outline-none cursor-pointer ${settings.achievements && settings.enabled ? 'bg-[#FAB12F]' : 'bg-gray-300'}`}
                             >
                                 <span className={`inline-block h-6 w-6 transform rounded-full bg-white shadow-md transition-transform duration-300 ${settings.achievements && settings.enabled ? 'translate-x-7' : 'translate-x-1'}`} />
                             </button>
@@ -370,7 +370,7 @@ export default function NotificationsPage() {
                         <button
                             onClick={() => handleSaveSettings()}
                             disabled={saving}
-                            className="w-full md:w-auto px-10 py-4 bg-linear-to-r from-[#FAB12F] to-[#FA812F] text-white rounded-2xl hover:shadow-lg hover:shadow-orange-500/30 disabled:opacity-70 disabled:cursor-not-allowed transition-all font-bold tracking-wide text-lg"
+                            className="w-full md:w-auto px-10 py-4 bg-linear-to-r from-[#FAB12F] to-[#FA812F] text-white rounded-2xl hover:shadow-lg hover:shadow-orange-500/30 disabled:opacity-70 disabled:cursor-not-allowed transition-all font-bold tracking-wide text-lg cursor-pointer"
                         >
                             {saving ? (
                                 <span className="flex items-center justify-center gap-2">

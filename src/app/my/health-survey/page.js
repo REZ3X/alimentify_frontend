@@ -33,7 +33,7 @@ const CustomSelect = ({ label, name, value, options, onChange, required, icon })
             <button
                 type="button"
                 onClick={() => setIsOpen(!isOpen)}
-                className={`w-full px-5 py-4 bg-white/50 border border-gray-200 rounded-2xl focus:outline-none text-left flex items-center justify-between transition-all duration-300 ${isOpen ? 'ring-2 ring-[#FAB12F] bg-white/80 shadow-lg' : 'hover:bg-white/60 shadow-inner'}`}
+                className={`w-full px-5 py-4 bg-white/50 border border-gray-200 rounded-2xl focus:outline-none text-left flex items-center justify-between transition-all duration-300 cursor-pointer ${isOpen ? 'ring-2 ring-[#FAB12F] bg-white/80 shadow-lg' : 'hover:bg-white/60 shadow-inner'}`}
             >
                 <span className={`block truncate font-medium ${!selectedOption ? 'text-gray-400' : 'text-gray-900'}`}>
                     {selectedOption ? selectedOption.label : 'Select...'}
@@ -403,7 +403,7 @@ export default function HealthSurveyPage() {
                                                 setStep(2);
                                             }
                                         }}
-                                        className="px-10 py-4 bg-linear-to-r from-[#FAB12F] to-[#FA812F] text-white rounded-2xl hover:shadow-lg hover:shadow-orange-500/30 transition-all font-bold tracking-wide transform hover:-translate-y-0.5"
+                                        className="px-10 py-4 bg-linear-to-r from-[#FAB12F] to-[#FA812F] text-white rounded-2xl hover:shadow-lg hover:shadow-orange-500/30 transition-all font-bold tracking-wide transform hover:-translate-y-0.5 cursor-pointer"
                                     >
                                         Continue
                                     </button>
@@ -444,7 +444,7 @@ export default function HealthSurveyPage() {
                                                     key={item.id}
                                                     type="button"
                                                     onClick={() => toggleArrayField('medical_conditions', item.id)}
-                                                    className={`relative group p-4 rounded-2xl border-2 transition-all duration-300 flex flex-col items-center justify-center gap-2 text-center hover:shadow-md ${formData.medical_conditions.includes(item.id)
+                                                    className={`relative group p-4 rounded-2xl border-2 transition-all duration-300 flex flex-col items-center justify-center gap-2 text-center hover:shadow-md cursor-pointer ${formData.medical_conditions.includes(item.id)
                                                         ? 'border-[#FAB12F] bg-[#FAB12F]/10 text-[#FA812F]'
                                                         : 'border-gray-100 bg-white/50 text-gray-600 hover:border-[#FAB12F]/30 hover:bg-white'
                                                         }`}
@@ -480,7 +480,7 @@ export default function HealthSurveyPage() {
                                                     key={item.id}
                                                     type="button"
                                                     onClick={() => toggleArrayField('allergies', item.id)}
-                                                    className={`relative group p-4 rounded-2xl border-2 transition-all duration-300 flex flex-col items-center justify-center gap-2 text-center hover:shadow-md ${formData.allergies.includes(item.id)
+                                                    className={`relative group p-4 rounded-2xl border-2 transition-all duration-300 flex flex-col items-center justify-center gap-2 text-center hover:shadow-md cursor-pointer ${formData.allergies.includes(item.id)
                                                         ? 'border-red-400 bg-red-50 text-red-600'
                                                         : 'border-gray-100 bg-white/50 text-gray-600 hover:border-red-200 hover:bg-white'
                                                         }`}
@@ -517,7 +517,7 @@ export default function HealthSurveyPage() {
                                                     key={item.id}
                                                     type="button"
                                                     onClick={() => toggleArrayField('dietary_preferences', item.id.toLowerCase().replace(' ', '_'))}
-                                                    className={`relative group p-4 rounded-2xl border-2 transition-all duration-300 flex flex-col items-center justify-center gap-2 text-center hover:shadow-md ${formData.dietary_preferences.includes(item.id.toLowerCase().replace(' ', '_'))
+                                                    className={`relative group p-4 rounded-2xl border-2 transition-all duration-300 flex flex-col items-center justify-center gap-2 text-center hover:shadow-md cursor-pointer ${formData.dietary_preferences.includes(item.id.toLowerCase().replace(' ', '_'))
                                                         ? 'border-[#FAB12F] bg-[#FAB12F]/10 text-[#FA812F]'
                                                         : 'border-gray-100 bg-white/50 text-gray-600 hover:border-[#FAB12F]/30 hover:bg-white'
                                                         }`}
@@ -559,14 +559,14 @@ export default function HealthSurveyPage() {
                                     <button
                                         type="button"
                                         onClick={() => setStep(1)}
-                                        className="px-8 py-4 bg-white/50 text-gray-700 rounded-2xl hover:bg-white/80 font-bold transition-all border border-gray-200"
+                                        className="px-8 py-4 bg-white/50 text-gray-700 rounded-2xl hover:bg-white/80 font-bold transition-all border border-gray-200 cursor-pointer"
                                     >
                                         Back
                                     </button>
                                     <button
                                         type="button"
                                         onClick={() => setStep(3)}
-                                        className="px-10 py-4 bg-linear-to-r from-[#FAB12F] to-[#FA812F] text-white rounded-2xl hover:shadow-lg hover:shadow-orange-500/30 transition-all font-bold tracking-wide transform hover:-translate-y-0.5"
+                                        className="px-10 py-4 bg-linear-to-r from-[#FAB12F] to-[#FA812F] text-white rounded-2xl hover:shadow-lg hover:shadow-orange-500/30 transition-all font-bold tracking-wide transform hover:-translate-y-0.5 cursor-pointer"
                                     >
                                         Continue
                                     </button>
@@ -664,7 +664,7 @@ export default function HealthSurveyPage() {
                                     <button
                                         type="button"
                                         onClick={() => setStep(2)}
-                                        className="w-full sm:w-auto px-8 py-4 bg-white/50 text-gray-700 rounded-2xl hover:bg-white/80 font-bold transition-all border border-gray-200"
+                                        className="w-full sm:w-auto px-8 py-4 bg-white/50 text-gray-700 rounded-2xl hover:bg-white/80 font-bold transition-all border border-gray-200 cursor-pointer"
                                         disabled={loading}
                                     >
                                         Back
@@ -672,7 +672,7 @@ export default function HealthSurveyPage() {
                                     <button
                                         type="submit"
                                         disabled={loading}
-                                        className="w-full sm:w-auto px-10 py-4 bg-linear-to-r from-[#FAB12F] to-[#FA812F] text-white rounded-2xl hover:shadow-lg hover:shadow-orange-500/30 transition-all font-bold tracking-wide transform hover:-translate-y-0.5 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-3 min-w-40"
+                                        className="w-full sm:w-auto px-10 py-4 bg-linear-to-r from-[#FAB12F] to-[#FA812F] text-white rounded-2xl hover:shadow-lg hover:shadow-orange-500/30 transition-all font-bold tracking-wide transform hover:-translate-y-0.5 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-3 min-w-40 cursor-pointer"
                                     >
                                         {loading && (
                                             <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
@@ -778,7 +778,7 @@ export default function HealthSurveyPage() {
                                     <p className="text-gray-600 font-medium text-lg">Your profile has been successfully saved.</p>
                                     <button
                                         onClick={() => router.push('/my')}
-                                        className="px-12 py-4 bg-linear-to-r from-[#FAB12F] to-[#FA812F] text-white rounded-2xl hover:shadow-lg hover:shadow-orange-500/30 transition-all font-bold tracking-wide text-lg transform hover:-translate-y-0.5 w-full sm:w-auto"
+                                        className="px-12 py-4 bg-linear-to-r from-[#FAB12F] to-[#FA812F] text-white rounded-2xl hover:shadow-lg hover:shadow-orange-500/30 transition-all font-bold tracking-wide text-lg transform hover:-translate-y-0.5 w-full sm:w-auto cursor-pointer"
                                     >
                                         Go to Dashboard
                                     </button>

@@ -37,14 +37,14 @@ export default function MealCard({ meal, onEdit, onDelete }) {
                 <div className="flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 absolute right-0 top-0 bottom-0 justify-center bg-linear-to-l from-white/90 via-white/60 to-transparent pl-12 pr-4 backdrop-blur-[2px]">
                     <button
                         onClick={() => onEdit(meal)}
-                        className="p-2.5 rounded-xl bg-blue-50 text-blue-600 hover:bg-blue-100 hover:scale-110 transition-all shadow-sm border border-blue-100"
+                        className="p-2.5 rounded-xl bg-blue-50 text-blue-600 hover:bg-blue-100 hover:scale-110 transition-all shadow-sm border border-blue-100 cursor-pointer"
                         title="Edit"
                     >
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
                     </button>
                     <button
                         onClick={() => onDelete(meal._id)}
-                        className="p-2.5 rounded-xl bg-red-50 text-red-600 hover:bg-red-100 hover:scale-110 transition-all shadow-sm border border-red-100"
+                        className="p-2.5 rounded-xl bg-red-50 text-red-600 hover:bg-red-100 hover:scale-110 transition-all shadow-sm border border-red-100 cursor-pointer"
                         title="Delete"
                     >
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
