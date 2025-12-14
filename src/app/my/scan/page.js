@@ -117,47 +117,53 @@ export default function FoodScannerPage() {
             }
 
             let mediaStream;
-            const attempts = [];
+            const constraints = {
+                video: {
+                    deviceId: deviceId ? { exact: deviceId } : undefined,
+                    facingMode: !deviceId && isMobile ? facingMode : undefined,
+                    width: { ideal: 1280 },
+                    height: { ideal: 720 }
+                }
+            };
 
-            if (deviceId) {
-                attempts.push(
-                    { video: { deviceId: { ideal: deviceId } } },
-                    { video: { deviceId: deviceId } },
-                    { video: true }
-                );
-            } else if (isMobile) {
-                attempts.push(
-                    { video: { facingMode: facingMode } },
-                    { video: true }
-                );
-            } else {
-                attempts.push({ video: true });
-            }
-
-            let lastError = null;
-
-            for (let i = 0; i < attempts.length; i++) {
-                try {
-                    mediaStream = await navigator.mediaDevices.getUserMedia(attempts[i]);
-                    break;
-                } catch (err) {
-                    lastError = err;
+            try {
+                mediaStream = await navigator.mediaDevices.getUserMedia(constraints);
+            } catch (err) {
+                console.warn('Preferred constraints failed, trying fallback:', err);
+                
+                // If environment camera fails on mobile, force fallback to user camera
+                if (isMobile && facingMode === 'environment') {
+                    try {
+                        console.log('Environment camera failed, switching to user camera');
+                        mediaStream = await navigator.mediaDevices.getUserMedia({ 
+                            video: { facingMode: 'user' } 
+                        });
+                        setFacingMode('user');
+                    } catch (userErr) {
+                        console.warn('User camera failed, trying generic video:', userErr);
+                        mediaStream = await navigator.mediaDevices.getUserMedia({ video: true });
+                    }
+                } else {
+                    mediaStream = await navigator.mediaDevices.getUserMedia({ video: true });
                 }
             }
 
             if (!mediaStream) {
-                throw lastError || new Error('Failed to start camera');
+                throw new Error('Failed to start camera');
             }
 
             setStream(mediaStream);
             if (videoRef.current) {
                 videoRef.current.srcObject = mediaStream;
-                videoRef.current.onloadedmetadata = () => {
-                    videoRef.current.play().catch(err => {
-                        console.error('Error playing video:', err);
-                        setError('Failed to start video playback. Please try again.');
-                    });
-                };
+                // Ensure video plays on mobile
+                videoRef.current.setAttribute('playsinline', 'true');
+                await videoRef.current.play().catch(err => {
+                    console.error('Error playing video:', err);
+                    // Retry play if it failed (sometimes needed on mobile)
+                    setTimeout(() => {
+                        videoRef.current?.play().catch(e => console.error('Retry play failed:', e));
+                    }, 100);
+                });
             }
             setUseCamera(true);
             setError(null);
@@ -555,7 +561,6 @@ export default function FoodScannerPage() {
                                 ref={fileInputRef}
                                 type="file"
                                 accept="image/*"
-                                capture={isMobile ? "environment" : undefined}
                                 onChange={handleFileSelect}
                                 className="hidden"
                             />
