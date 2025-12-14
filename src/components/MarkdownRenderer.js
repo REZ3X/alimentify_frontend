@@ -146,8 +146,43 @@ export default function MarkdownRenderer({ content, className = '' }) {
         let key = 0;
 
         while (remaining.length > 0) {
+            let match = remaining.match(/^(.*?)\*\*\[([^\]]+)\]\(([^)]+)\)\*\*/);
+            if (match) {
+                if (match[1]) parts.push(<span key={key++}>{match[1]}</span>);
+                parts.push(
+                    <a
+                        key={key++}
+                        href={match[3]}
+                        className="text-[#FA812F] hover:text-[#ff9a5c] underline font-bold transition-colors"
+                        target={match[3].startsWith('http') ? '_blank' : '_self'}
+                        rel={match[3].startsWith('http') ? 'noopener noreferrer' : undefined}
+                    >
+                        {match[2]}
+                    </a>
+                );
+                remaining = remaining.slice(match[0].length);
+                continue;
+            }
 
-            let match = remaining.match(/^(.*?)\*\*(.+?)\*\*/);
+            match = remaining.match(/^(.*?)\[([^\]]+)\]\(([^)]+)\)/);
+            if (match) {
+                if (match[1]) parts.push(<span key={key++}>{match[1]}</span>);
+                parts.push(
+                    <a
+                        key={key++}
+                        href={match[3]}
+                        className="text-[#FA812F] hover:text-[#ff9a5c] underline font-medium transition-colors"
+                        target={match[3].startsWith('http') ? '_blank' : '_self'}
+                        rel={match[3].startsWith('http') ? 'noopener noreferrer' : undefined}
+                    >
+                        {match[2]}
+                    </a>
+                );
+                remaining = remaining.slice(match[0].length);
+                continue;
+            }
+
+            match = remaining.match(/^(.*?)\*\*(.+?)\*\*/);
             if (!match) match = remaining.match(/^(.*?)__(.+?)__/);
             if (match) {
                 if (match[1]) parts.push(<span key={key++}>{match[1]}</span>);

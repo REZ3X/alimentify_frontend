@@ -43,3 +43,63 @@ body {
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background: rgba(250, 177, 47, 0.6);
 }
+
+/* Animations */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.3s ease-out;
+}
+
+/* Markdown styles for chat messages */
+.markdown-white strong {
+  font-weight: 700;
+  color: white;
+}
+
+.markdown-white em {
+  font-style: italic;
+}
+
+.markdown-white code {
+  background-color: rgba(255, 255, 255, 0.2);
+  padding: 0.125rem 0.25rem;
+  border-radius: 0.25rem;
+  font-size: 0.875em;
+}
+
+.markdown-white a {
+  color: white;
+  text-decoration: underline;
+}
+
+.markdown-dark strong {
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.markdown-dark em {
+  font-style: italic;
+}
+
+.markdown-dark code {
+  background-color: rgba(250, 177, 47, 0.1);
+  padding: 0.125rem 0.25rem;
+  border-radius: 0.25rem;
+  font-size: 0.875em;
+  color: #fa812f;
+}
+
+.markdown-dark a {
+  color: #fa812f;
+  text-decoration: underline;
+}
