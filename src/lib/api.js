@@ -101,6 +101,62 @@ class ApiClient {
         return this.request(`/auth/verify-email?token=${token}`);
     }
 
+    async compressImage(file, maxSizeMB = 5, maxWidthOrHeight = 2048) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = new Image();
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    let width = img.width;
+                    let height = img.height;
+
+                    if (width > maxWidthOrHeight || height > maxWidthOrHeight) {
+                        if (width > height) {
+                            height = (height / width) * maxWidthOrHeight;
+                            width = maxWidthOrHeight;
+                        } else {
+                            width = (width / height) * maxWidthOrHeight;
+                            height = maxWidthOrHeight;
+                        }
+                    }
+
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+
+                    let quality = 0.8;
+                    const attemptCompress = () => {
+                        canvas.toBlob((blob) => {
+                            if (!blob) {
+                                reject(new Error('Failed to compress image'));
+                                return;
+                            }
+
+                            const sizeMB = blob.size / (1024 * 1024);
+                            if (sizeMB <= maxSizeMB || quality <= 0.3) {
+                                const compressedFile = new File([blob], file.name || 'image.jpg', {
+                                    type: 'image/jpeg',
+                                    lastModified: Date.now()
+                                });
+                                resolve(compressedFile);
+                            } else {
+                                quality -= 0.1;
+                                attemptCompress();
+                            }
+                        }, 'image/jpeg', quality);
+                    };
+                    attemptCompress();
+                };
+                img.onerror = () => reject(new Error('Failed to load image for compression'));
+                img.src = e.target.result;
+            };
+            reader.onerror = () => reject(new Error('Failed to read image file'));
+            reader.readAsDataURL(file);
+        });
+    }
+
     async analyzeFoodImage(imageFile) {
         if (!imageFile) {
             throw new Error('No image file provided');
@@ -111,13 +167,24 @@ class ApiClient {
         }
 
         const MAX_SIZE = 20 * 1024 * 1024;
-        if (imageFile.size > MAX_SIZE) {
-            const sizeMB = (imageFile.size / (1024 * 1024)).toFixed(2);
+
+        let fileToUpload = imageFile;
+        if (imageFile.size > 5 * 1024 * 1024) {
+            try {
+                fileToUpload = await this.compressImage(imageFile, 5, 2048);
+                console.log(`Compressed image from ${(imageFile.size / 1024 / 1024).toFixed(2)}MB to ${(fileToUpload.size / 1024 / 1024).toFixed(2)}MB`);
+            } catch (err) {
+                console.warn('Image compression failed, using original:', err);
+            }
+        }
+
+        if (fileToUpload.size > MAX_SIZE) {
+            const sizeMB = (fileToUpload.size / (1024 * 1024)).toFixed(2);
             throw new Error(`FILE_TOO_LARGE:Image size (${sizeMB}MB) exceeds the 20MB limit. Please use a smaller image or compress it.`);
         }
 
         const formData = new FormData();
-        formData.append('image', imageFile, imageFile.name || 'image.jpg');
+        formData.append('image', fileToUpload, fileToUpload.name || 'image.jpg');
 
         const token = this.getToken();
         const headers = {};
