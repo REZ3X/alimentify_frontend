@@ -55,7 +55,7 @@ export default function ChatBubble() {
         router.push('/my/chat');
     };
 
-    if (pathname?.startsWith('/my/chat') || pathname === '/auth/login' || pathname === '/auth/register') {
+    if (pathname?.startsWith('/my/chat') || pathname === '/auth/login' || pathname === '/auth/register' || pathname === '/not-found') {
         return null;
     }
 
