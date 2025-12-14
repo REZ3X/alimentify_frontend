@@ -102,6 +102,14 @@ class ApiClient {
     }
 
     async analyzeFoodImage(imageFile) {
+        if (!imageFile) {
+            throw new Error('No image file provided');
+        }
+
+        if (!imageFile.size || imageFile.size === 0) {
+            throw new Error('Image file is empty or corrupted. Please try again.');
+        }
+
         const MAX_SIZE = 20 * 1024 * 1024;
         if (imageFile.size > MAX_SIZE) {
             const sizeMB = (imageFile.size / (1024 * 1024)).toFixed(2);
@@ -109,7 +117,7 @@ class ApiClient {
         }
 
         const formData = new FormData();
-        formData.append('image', imageFile);
+        formData.append('image', imageFile, imageFile.name || 'image.jpg');
 
         const token = this.getToken();
         const headers = {};

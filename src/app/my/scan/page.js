@@ -245,6 +245,14 @@ export default function FoodScannerPage() {
             ctx.drawImage(video, 0, 0);
 
             canvas.toBlob((blob) => {
+                if (!blob) {
+                    const message = 'Failed to capture image. Please try again.';
+                    setError(message);
+                    notificationManager.error(message);
+                    stopCamera();
+                    return;
+                }
+
                 if (blob.size > 20 * 1024 * 1024) {
                     const sizeMB = (blob.size / (1024 * 1024)).toFixed(2);
                     const message = `Captured image (${sizeMB}MB) exceeds the 20MB limit. Try reducing camera resolution or capturing in different lighting.`;
@@ -254,7 +262,10 @@ export default function FoodScannerPage() {
                     return;
                 }
 
-                const file = new File([blob], 'camera-capture.jpg', { type: 'image/jpeg' });
+                const file = new File([blob], 'camera-capture.jpg', {
+                    type: 'image/jpeg',
+                    lastModified: Date.now()
+                });
                 setSelectedImage(file);
                 setPreviewUrl(URL.createObjectURL(file));
                 setResult(null);
@@ -288,6 +299,13 @@ export default function FoodScannerPage() {
 
             if (errorMsg.startsWith('FILE_TOO_LARGE:')) {
                 const message = errorMsg.replace('FILE_TOO_LARGE:', '');
+                notificationManager.error(message);
+                setError(message);
+            } else if (errorMsg.includes('empty') || errorMsg.includes('corrupted')) {
+                notificationManager.error(errorMsg);
+                setError(errorMsg);
+            } else if (errorMsg.includes('multipart') || errorMsg.includes('form-data')) {
+                const message = 'Failed to upload image. Please try capturing/selecting the image again.';
                 notificationManager.error(message);
                 setError(message);
             } else if (errorMsg.includes('SAFETY') || errorMsg.includes('blocked') || errorMsg.includes('filter')) {
