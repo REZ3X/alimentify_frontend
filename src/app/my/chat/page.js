@@ -119,7 +119,7 @@ export default function ChatHistoryPage() {
                     <button
                         onClick={handleNewChat}
                         disabled={isCreating}
-                        className="px-6 py-3 bg-gradient-to-r from-[#FAB12F] to-[#FA812F] text-white rounded-2xl font-bold shadow-lg shadow-[#FAB12F]/20 hover:shadow-[#FAB12F]/40 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+                        className="px-6 py-3 bg-gradient-to-r from-[#FAB12F] to-[#FA812F] text-white rounded-2xl font-bold shadow-lg shadow-[#FAB12F]/20 hover:shadow-[#FAB12F]/40 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed cursor-pointer"
                     >
                         {isCreating ? (
                             <svg className="animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
@@ -160,7 +160,7 @@ export default function ChatHistoryPage() {
                                 </p>
                                 <button
                                     onClick={handleNewChat}
-                                    className="px-8 py-3 bg-white text-[#FAB12F] font-bold rounded-2xl shadow-sm border border-[#FAB12F]/20 hover:bg-[#FEF3E2] transition-all"
+                                    className="px-8 py-3 bg-white text-[#FAB12F] font-bold rounded-2xl shadow-sm border border-[#FAB12F]/20 hover:bg-[#FEF3E2] transition-all cursor-pointer"
                                 >
                                     Start First Conversation
                                 </button>

@@ -113,13 +113,16 @@ function LandingPageContent() {
                 </span>
                 <div className="absolute inset-0 bg-[#FAB12F] transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-300" />
               </Link>
-              <Link
-                href="#features"
-                className="px-4 sm:px-8 py-3 sm:py-4 bg-white text-gray-800 rounded-2xl font-mono font-bold border-2 border-[#FEF3E2] hover:border-[#FAB12F] hover:bg-[#FEF3E2] transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2 text-sm sm:text-base"
+              <button
+                onClick={(e) => {
+                  e.preventDefault();
+                  document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' });
+                }}
+                className="px-4 sm:px-8 py-3 sm:py-4 bg-white text-gray-800 rounded-2xl font-mono font-bold border-2 border-[#FEF3E2] hover:border-[#FAB12F] hover:bg-[#FEF3E2] transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2 text-sm sm:text-base cursor-pointer"
               >
                 <svg className="w-4 h-4 sm:w-5 sm:h-5 text-[#FA812F]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                 Steps
-              </Link>
+              </button>
             </div>
 
             {/* Mobile Hero Visual */}
@@ -345,7 +348,7 @@ function LandingPageContent() {
         </div>
 
         {/* How It Works */}
-        <div className="mb-32 relative">
+        <div id="how-it-works" className="mb-32 relative scroll-mt-32">
           {/* Mobile Decorative Elements */}
           <div className="md:hidden absolute inset-0 pointer-events-none overflow-hidden">
             {/* Top Left - Front (Clear) */}
@@ -501,13 +504,8 @@ function LandingPageContent() {
           {/* Bottom Bar */}
           <div className="pt-8 border-t border-gray-100 flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-sm text-gray-400 font-medium">
-              &copy; 2025 Alimentify Inc. All rights reserved.
+              &copy; 2025 Slaviors. All rights reserved.
             </p>
-            <div className="flex gap-8">
-              <a href="#" className="text-sm text-gray-400 hover:text-[#FA812F] transition-colors">Privacy Policy</a>
-              <a href="#" className="text-sm text-gray-400 hover:text-[#FA812F] transition-colors">Terms of Service</a>
-              <a href="#" className="text-sm text-gray-400 hover:text-[#FA812F] transition-colors">Cookies</a>
-            </div>
           </div>
         </div>
       </footer>

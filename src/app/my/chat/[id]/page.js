@@ -205,7 +205,7 @@ export default function ChatPage({ params }) {
                     <div className="flex items-center gap-3 md:gap-4">
                         <button
                             onClick={() => router.push('/my/chat')}
-                            className="p-2 md:p-3 rounded-full bg-white/50 hover:bg-white text-gray-600 hover:text-[#FAB12F] transition-all duration-300 shadow-sm border border-white/50 group"
+                            className="p-2 md:p-3 rounded-full bg-white/50 hover:bg-white text-gray-600 hover:text-[#FAB12F] transition-all duration-300 shadow-sm border border-white/50 group cursor-pointer"
                         >
                             <svg className="w-5 h-5 transform group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -259,7 +259,7 @@ export default function ChatPage({ params }) {
                                 />
                                 <button
                                     onClick={removeImage}
-                                    className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1.5 hover:bg-red-600 transition-colors shadow-sm"
+                                    className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1.5 hover:bg-red-600 transition-colors shadow-sm cursor-pointer"
                                 >
                                     <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -280,7 +280,7 @@ export default function ChatPage({ params }) {
                             <button
                                 type="button"
                                 onClick={() => fileInputRef.current?.click()}
-                                className="flex-shrink-0 w-10 h-10 md:w-12 md:h-12 bg-white/60 hover:bg-white text-gray-500 hover:text-[#FAB12F] rounded-xl md:rounded-2xl transition-all border border-white/50 flex items-center justify-center shadow-sm hover:shadow-md"
+                                className="flex-shrink-0 w-10 h-10 md:w-12 md:h-12 bg-white/60 hover:bg-white text-gray-500 hover:text-[#FAB12F] rounded-xl md:rounded-2xl transition-all border border-white/50 flex items-center justify-center shadow-sm hover:shadow-md cursor-pointer"
                                 disabled={isSending}
                                 title="Upload image"
                             >
@@ -303,7 +303,7 @@ export default function ChatPage({ params }) {
                             <button
                                 type="submit"
                                 disabled={(!inputMessage.trim() && !imageFile) || isSending}
-                                className="flex-shrink-0 w-10 h-10 md:w-12 md:h-12 bg-gradient-to-r from-[#FAB12F] to-[#FA812F] text-white rounded-xl md:rounded-2xl transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center shadow-lg shadow-[#FAB12F]/20 hover:shadow-[#FAB12F]/40 hover:scale-105 active:scale-95"
+                                className="flex-shrink-0 w-10 h-10 md:w-12 md:h-12 bg-gradient-to-r from-[#FAB12F] to-[#FA812F] text-white rounded-xl md:rounded-2xl transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center shadow-lg shadow-[#FAB12F]/20 hover:shadow-[#FAB12F]/40 hover:scale-105 active:scale-95 cursor-pointer"
                                 title={isSending ? 'Processing...' : 'Send message'}
                             >
                                 {isSending ? (

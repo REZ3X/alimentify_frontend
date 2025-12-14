@@ -413,7 +413,7 @@ export default function FoodScannerPage() {
                     <div className="flex items-center gap-4">
                         <button
                             onClick={() => router.back()}
-                            className="p-3 rounded-full bg-white/50 hover:bg-white text-gray-600 hover:text-[#FAB12F] transition-all duration-300 shadow-sm border border-white/50 group"
+                            className="p-3 rounded-full bg-white/50 hover:bg-white text-gray-600 hover:text-[#FAB12F] transition-all duration-300 shadow-sm border border-white/50 group cursor-pointer"
                         >
                             <svg className="w-5 h-5 transform group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -462,7 +462,7 @@ export default function FoodScannerPage() {
 
                                     <button
                                         onClick={() => startCamera()}
-                                        className="w-full py-4 bg-gradient-to-r from-[#FAB12F] to-[#FA812F] text-white rounded-2xl font-bold shadow-lg shadow-[#FAB12F]/20 hover:shadow-[#FAB12F]/40 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 flex items-center justify-center gap-3"
+                                        className="w-full py-4 bg-gradient-to-r from-[#FAB12F] to-[#FA812F] text-white rounded-2xl font-bold shadow-lg shadow-[#FAB12F]/20 hover:shadow-[#FAB12F]/40 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 flex items-center justify-center gap-3 cursor-pointer"
                                     >
                                         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
@@ -489,14 +489,14 @@ export default function FoodScannerPage() {
                                         <div className="absolute bottom-6 left-0 right-0 flex justify-center items-center gap-6">
                                             <button
                                                 onClick={stopCamera}
-                                                className="p-4 bg-white/20 backdrop-blur-md rounded-full text-white hover:bg-white/30 transition-all"
+                                                className="p-4 bg-white/20 backdrop-blur-md rounded-full text-white hover:bg-white/30 transition-all cursor-pointer"
                                             >
                                                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
                                             </button>
 
                                             <button
                                                 onClick={capturePhoto}
-                                                className="w-20 h-20 rounded-full border-4 border-white bg-white/20 backdrop-blur-md flex items-center justify-center hover:scale-105 active:scale-95 transition-all"
+                                                className="w-20 h-20 rounded-full border-4 border-white bg-white/20 backdrop-blur-md flex items-center justify-center hover:scale-105 active:scale-95 transition-all cursor-pointer"
                                             >
                                                 <div className="w-16 h-16 bg-white rounded-full"></div>
                                             </button>
@@ -504,7 +504,7 @@ export default function FoodScannerPage() {
                                             {isMobile && (
                                                 <button
                                                     onClick={flipCamera}
-                                                    className="p-4 bg-white/20 backdrop-blur-md rounded-full text-white hover:bg-white/30 transition-all"
+                                                    className="p-4 bg-white/20 backdrop-blur-md rounded-full text-white hover:bg-white/30 transition-all cursor-pointer"
                                                 >
                                                     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
                                                 </button>
@@ -522,7 +522,7 @@ export default function FoodScannerPage() {
                                         {!result && (
                                             <button
                                                 onClick={resetScanner}
-                                                className="absolute top-4 right-4 p-2 bg-black/50 text-white rounded-full hover:bg-black/70 transition-all"
+                                                className="absolute top-4 right-4 p-2 bg-black/50 text-white rounded-full hover:bg-black/70 transition-all cursor-pointer"
                                             >
                                                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
                                             </button>
@@ -533,7 +533,7 @@ export default function FoodScannerPage() {
                                         <button
                                             onClick={analyzeFood}
                                             disabled={analyzing}
-                                            className="w-full py-4 bg-gradient-to-r from-[#FAB12F] to-[#FA812F] text-white rounded-2xl font-bold shadow-lg shadow-[#FAB12F]/20 hover:shadow-[#FAB12F]/40 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none"
+                                            className="w-full py-4 bg-gradient-to-r from-[#FAB12F] to-[#FA812F] text-white rounded-2xl font-bold shadow-lg shadow-[#FAB12F]/20 hover:shadow-[#FAB12F]/40 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none cursor-pointer"
                                         >
                                             {analyzing ? (
                                                 <span className="flex items-center justify-center gap-3">
@@ -751,7 +751,7 @@ export default function FoodScannerPage() {
                                             return (
                                                 <button
                                                     onClick={prepareLogData}
-                                                    className="flex-1 py-4 bg-green-500 hover:bg-green-600 text-white rounded-2xl font-bold shadow-lg shadow-green-500/20 hover:shadow-green-500/40 transition-all duration-300 flex items-center justify-center gap-2"
+                                                    className="flex-1 py-4 bg-green-500 hover:bg-green-600 text-white rounded-2xl font-bold shadow-lg shadow-green-500/20 hover:shadow-green-500/40 transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer"
                                                 >
                                                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
                                                     Log This Meal
@@ -762,7 +762,7 @@ export default function FoodScannerPage() {
                                     })()}
                                     <button
                                         onClick={resetScanner}
-                                        className="flex-1 py-4 bg-white hover:bg-gray-50 text-gray-700 rounded-2xl font-bold shadow-sm border border-gray-200 transition-all duration-300"
+                                        className="flex-1 py-4 bg-white hover:bg-gray-50 text-gray-700 rounded-2xl font-bold shadow-sm border border-gray-200 transition-all duration-300 cursor-pointer"
                                     >
                                         Scan Another
                                     </button>

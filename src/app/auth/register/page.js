@@ -66,7 +66,7 @@ export default function RegisterPage() {
                     <button
                         onClick={handleGoogleSignup}
                         disabled={loading}
-                        className="w-full flex items-center justify-center gap-3 bg-white hover:bg-gray-50 border-2 border-[#FEF3E2] hover:border-[#FAB12F] rounded-2xl px-6 py-4 text-gray-700 font-bold font-mono transition-all shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed group"
+                        className="w-full flex items-center justify-center gap-3 bg-white hover:bg-gray-50 border-2 border-[#FEF3E2] hover:border-[#FAB12F] rounded-2xl px-6 py-4 text-gray-700 font-bold font-mono transition-all shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed group cursor-pointer"
                     >
                         {loading ? (
                             <div className="w-5 h-5 border-2 border-[#FAB12F] border-t-[#FA812F] rounded-full animate-spin" />
@@ -119,13 +119,6 @@ export default function RegisterPage() {
                             </Link>
                         </p>
                     </div>
-                </div>
-
-                {/* Footer Links */}
-                <div className="mt-8 flex justify-center gap-6 text-sm text-gray-400 font-medium">
-                    <a href="#" className="hover:text-[#FA812F] transition-colors">Privacy</a>
-                    <a href="#" className="hover:text-[#FA812F] transition-colors">Terms</a>
-                    <a href="#" className="hover:text-[#FA812F] transition-colors">Help</a>
                 </div>
             </div>
         </div>

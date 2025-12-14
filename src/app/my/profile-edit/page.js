@@ -29,7 +29,7 @@ const CustomSelect = ({ label, name, value, options, onChange }) => {
             <button
                 type="button"
                 onClick={() => setIsOpen(!isOpen)}
-                className={`w-full px-6 py-4 bg-white/50 border border-white/50 rounded-2xl focus:outline-none text-left flex items-center justify-between transition-all duration-300 ${isOpen ? 'ring-2 ring-[#FAB12F] bg-white/80 shadow-lg' : 'hover:bg-white/60 shadow-inner'}`}
+                className={`w-full px-6 py-4 bg-white/50 border border-white/50 rounded-2xl focus:outline-none text-left flex items-center justify-between transition-all duration-300 cursor-pointer ${isOpen ? 'ring-2 ring-[#FAB12F] bg-white/80 shadow-lg' : 'hover:bg-white/60 shadow-inner'}`}
             >
                 <span className={`block truncate font-medium ${!selectedOption ? 'text-gray-400' : 'text-gray-900'}`}>
                     {selectedOption ? selectedOption.label : 'Select...'}
@@ -306,7 +306,7 @@ export default function ProfileEditPage() {
                     <div className="flex items-center gap-4">
                         <button 
                             onClick={() => router.back()}
-                            className="p-3 rounded-full bg-white/50 hover:bg-white text-gray-600 hover:text-[#FAB12F] transition-all duration-300 shadow-sm border border-white/50 group"
+                            className="p-3 rounded-full bg-white/50 hover:bg-white text-gray-600 hover:text-[#FAB12F] transition-all duration-300 shadow-sm border border-white/50 group cursor-pointer"
                         >
                             <svg className="w-5 h-5 transform group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -511,7 +511,7 @@ export default function ProfileEditPage() {
                                 <button
                                     type="button"
                                     onClick={() => setShowChanges(!showChanges)}
-                                    className="text-sm text-blue-600 hover:text-blue-800 font-bold bg-white/50 px-3 py-1 rounded-full transition-colors"
+                                    className="text-sm text-blue-600 hover:text-blue-800 font-bold bg-white/50 px-3 py-1 rounded-full transition-colors cursor-pointer"
                                 >
                                     {showChanges ? 'Hide' : 'Show'} Details
                                 </button>
@@ -541,7 +541,7 @@ export default function ProfileEditPage() {
                         <button
                             type="submit"
                             disabled={saving || !hasChanges()}
-                            className="flex-1 py-4 bg-linear-to-r from-[#FAB12F] to-[#FA812F] text-white rounded-2xl font-bold shadow-lg shadow-[#FAB12F]/20 hover:shadow-[#FAB12F]/40 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-2"
+                            className="flex-1 py-4 bg-linear-to-r from-[#FAB12F] to-[#FA812F] text-white rounded-2xl font-bold shadow-lg shadow-[#FAB12F]/20 hover:shadow-[#FAB12F]/40 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-2 cursor-pointer"
                         >
                             {saving ? (
                                 <>
@@ -557,7 +557,7 @@ export default function ProfileEditPage() {
                         <button
                             type="button"
                             onClick={() => router.push('/my')}
-                            className="px-8 py-4 bg-white hover:bg-gray-50 text-gray-700 rounded-2xl font-bold shadow-sm border border-gray-200 transition-all duration-300"
+                            className="px-8 py-4 bg-white hover:bg-gray-50 text-gray-700 rounded-2xl font-bold shadow-sm border border-gray-200 transition-all duration-300 cursor-pointer"
                         >
                             Cancel
                         </button>
