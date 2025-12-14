@@ -102,6 +102,12 @@ class ApiClient {
     }
 
     async analyzeFoodImage(imageFile) {
+        const MAX_SIZE = 20 * 1024 * 1024;
+        if (imageFile.size > MAX_SIZE) {
+            const sizeMB = (imageFile.size / (1024 * 1024)).toFixed(2);
+            throw new Error(`FILE_TOO_LARGE:Image size (${sizeMB}MB) exceeds the 20MB limit. Please use a smaller image or compress it.`);
+        }
+
         const formData = new FormData();
         formData.append('image', imageFile);
 
@@ -117,7 +123,27 @@ class ApiClient {
             body: formData,
         });
 
-        const data = await response.json();
+        const contentType = response.headers.get('content-type');
+        let data;
+
+        if (contentType && contentType.includes('application/json')) {
+            data = await response.json();
+        } else {
+            const text = await response.text();
+            if (!response.ok) {
+                if (response.status === 413 || text.toLowerCase().includes('too large') || text.toLowerCase().includes('entity')) {
+                    throw new Error('FILE_TOO_LARGE:The image file is too large. Please use a smaller image (max 20MB).');
+                } else if (response.status === 403) {
+                    throw new Error('The server rejected the request. Please try again with a different image.');
+                } else if (response.status >= 500) {
+                    throw new Error('Server error occurred. Please try again later.');
+                } else {
+                    throw new Error('Failed to analyze food image. Please try again.');
+                }
+            }
+            throw new Error('Unexpected server response. Please try again.');
+        }
+
         if (!response.ok) {
             throw new Error(data.error || 'Failed to analyze food image');
         }

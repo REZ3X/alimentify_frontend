@@ -111,15 +111,20 @@ export default function FoodScannerPage() {
     const handleDrop = (e) => {
         e.preventDefault();
         setIsDragging(false);
-        
+
         const file = e.dataTransfer.files[0];
         if (file) {
             if (!file.type.startsWith('image/')) {
-                setError('Please upload an image file');
+                const message = 'Please upload an image file';
+                setError(message);
+                notificationManager.error(message);
                 return;
             }
-            if (file.size > 10 * 1024 * 1024) {
-                setError('Image size must be less than 10MB');
+            if (file.size > 20 * 1024 * 1024) {
+                const sizeMB = (file.size / (1024 * 1024)).toFixed(2);
+                const message = `Image size (${sizeMB}MB) exceeds the 20MB limit. Please use a smaller image or compress it.`;
+                setError(message);
+                notificationManager.error(message);
                 return;
             }
             setSelectedImage(file);
@@ -132,8 +137,11 @@ export default function FoodScannerPage() {
     const handleFileSelect = (e) => {
         const file = e.target.files[0];
         if (file) {
-            if (file.size > 10 * 1024 * 1024) {
-                setError('Image size must be less than 10MB');
+            if (file.size > 20 * 1024 * 1024) {
+                const sizeMB = (file.size / (1024 * 1024)).toFixed(2);
+                const message = `Image size (${sizeMB}MB) exceeds the 20MB limit. Please use a smaller image or compress it.`;
+                setError(message);
+                notificationManager.error(message);
                 return;
             }
             setSelectedImage(file);
@@ -163,13 +171,13 @@ export default function FoodScannerPage() {
                 mediaStream = await navigator.mediaDevices.getUserMedia(constraints);
             } catch (err) {
                 console.warn('Preferred constraints failed, trying fallback:', err);
-                
+
                 // If environment camera fails on mobile, force fallback to user camera
                 if (isMobile && facingMode === 'environment') {
                     try {
                         console.log('Environment camera failed, switching to user camera');
-                        mediaStream = await navigator.mediaDevices.getUserMedia({ 
-                            video: { facingMode: 'user' } 
+                        mediaStream = await navigator.mediaDevices.getUserMedia({
+                            video: { facingMode: 'user' }
                         });
                         setFacingMode('user');
                     } catch (userErr) {
@@ -237,6 +245,15 @@ export default function FoodScannerPage() {
             ctx.drawImage(video, 0, 0);
 
             canvas.toBlob((blob) => {
+                if (blob.size > 20 * 1024 * 1024) {
+                    const sizeMB = (blob.size / (1024 * 1024)).toFixed(2);
+                    const message = `Captured image (${sizeMB}MB) exceeds the 20MB limit. Try reducing camera resolution or capturing in different lighting.`;
+                    setError(message);
+                    notificationManager.error(message);
+                    stopCamera();
+                    return;
+                }
+
                 const file = new File([blob], 'camera-capture.jpg', { type: 'image/jpeg' });
                 setSelectedImage(file);
                 setPreviewUrl(URL.createObjectURL(file));
@@ -268,8 +285,18 @@ export default function FoodScannerPage() {
             setResult(response);
         } catch (err) {
             const errorMsg = err.message || 'Failed to analyze food. Please try again.';
-            if (errorMsg.includes('SAFETY') || errorMsg.includes('blocked') || errorMsg.includes('filter')) {
-                setError('This image could not be processed. Please upload a clear photo of food.');
+
+            if (errorMsg.startsWith('FILE_TOO_LARGE:')) {
+                const message = errorMsg.replace('FILE_TOO_LARGE:', '');
+                notificationManager.error(message);
+                setError(message);
+            } else if (errorMsg.includes('SAFETY') || errorMsg.includes('blocked') || errorMsg.includes('filter')) {
+                const message = 'This image could not be processed. Please upload a clear photo of food.';
+                notificationManager.error(message);
+                setError(message);
+            } else if (errorMsg.includes('Server error') || errorMsg.includes('try again later')) {
+                notificationManager.error(errorMsg);
+                setError(errorMsg);
             } else {
                 setError(errorMsg);
             }
@@ -486,11 +513,10 @@ export default function FoodScannerPage() {
                                         onDragOver={handleDragOver}
                                         onDragLeave={handleDragLeave}
                                         onDrop={handleDrop}
-                                        className={`border-3 border-dashed rounded-[2rem] p-12 text-center transition-all duration-300 cursor-pointer group ${
-                                            isDragging 
-                                                ? 'border-[#FAB12F] bg-white/60 scale-[1.02]' 
-                                                : 'border-[#FAB12F]/30 hover:border-[#FAB12F] bg-white/40 hover:bg-white/60'
-                                        }`}
+                                        className={`border-3 border-dashed rounded-[2rem] p-12 text-center transition-all duration-300 cursor-pointer group ${isDragging
+                                            ? 'border-[#FAB12F] bg-white/60 scale-[1.02]'
+                                            : 'border-[#FAB12F]/30 hover:border-[#FAB12F] bg-white/40 hover:bg-white/60'
+                                            }`}
                                     >
                                         <div className="w-20 h-20 bg-[#FAB12F]/10 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
                                             <svg className="w-10 h-10 text-[#FAB12F]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
