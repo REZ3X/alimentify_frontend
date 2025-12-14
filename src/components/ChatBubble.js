@@ -75,7 +75,7 @@ export default function ChatBubble() {
             {/* Main Chat Button */}
             <button
                 onClick={() => setIsOpen(!isOpen)}
-                className={`w-16 h-16 bg-linear-to-br from-[#FAB12F] to-[#FA812F] text-white rounded-full shadow-[0_8px_32px_rgba(250,129,47,0.4)] flex items-center justify-center transition-all duration-500 hover:scale-110 hover:rotate-12 active:scale-95 group border-4 border-white/20 backdrop-blur-md relative overflow-hidden ${isOpen ? 'rotate-90' : ''}`}
+                className={`w-16 h-16 bg-linear-to-br from-[#FAB12F] to-[#FA812F] text-white rounded-full shadow-[0_8px_32px_rgba(250,129,47,0.4)] flex items-center justify-center transition-all duration-500 hover:scale-110 hover:rotate-12 active:scale-95 group border-4 border-white/20 backdrop-blur-md relative overflow-hidden cursor-pointer ${isOpen ? 'rotate-90' : ''}`}
                 aria-label="AI Chat Assistant"
             >
                 <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-500 rounded-full"></div>
@@ -131,7 +131,7 @@ export default function ChatBubble() {
                         {!user ? (
                             <button
                                 onClick={handleLogin}
-                                className="w-full flex items-center gap-4 p-4 rounded-3xl bg-white/20 border border-white/30 hover:bg-white/40 hover:border-[#FAB12F]/50 hover:shadow-lg hover:shadow-[#FAB12F]/10 transition-all duration-300 group text-left backdrop-blur-md"
+                                className="w-full flex items-center gap-4 p-4 rounded-3xl bg-white/20 border border-white/30 hover:bg-white/40 hover:border-[#FAB12F]/50 hover:shadow-lg hover:shadow-[#FAB12F]/10 transition-all duration-300 group text-left backdrop-blur-md cursor-pointer"
                             >
                                 <div className="w-12 h-12 bg-white/30 rounded-2xl flex items-center justify-center text-gray-500 group-hover:bg-[#FAB12F] group-hover:text-white transition-colors duration-300 shadow-sm">
                                     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -148,7 +148,7 @@ export default function ChatBubble() {
                                 <button
                                     onClick={handleNewChat}
                                     disabled={isLoading}
-                                    className="w-full flex items-center gap-4 p-4 rounded-3xl bg-white/20 border border-white/30 hover:bg-white/40 hover:border-[#FAB12F]/50 hover:shadow-lg hover:shadow-[#FAB12F]/10 transition-all duration-300 group text-left relative overflow-hidden backdrop-blur-md"
+                                    className="w-full flex items-center gap-4 p-4 rounded-3xl bg-white/20 border border-white/30 hover:bg-white/40 hover:border-[#FAB12F]/50 hover:shadow-lg hover:shadow-[#FAB12F]/10 transition-all duration-300 group text-left relative overflow-hidden backdrop-blur-md cursor-pointer"
                                 >
                                     <div className="absolute inset-0 bg-[#FAB12F]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                                     <div className="w-12 h-12 bg-white/30 rounded-2xl flex items-center justify-center text-[#FA812F] group-hover:scale-110 transition-transform duration-300 relative z-10 shadow-sm">
@@ -171,7 +171,7 @@ export default function ChatBubble() {
 
                                 <button
                                     onClick={handleViewChats}
-                                    className="w-full flex items-center gap-4 p-4 rounded-3xl bg-white/20 border border-white/30 hover:bg-white/40 hover:border-[#FAB12F]/50 hover:shadow-lg hover:shadow-[#FAB12F]/10 transition-all duration-300 group text-left relative overflow-hidden backdrop-blur-md"
+                                    className="w-full flex items-center gap-4 p-4 rounded-3xl bg-white/20 border border-white/30 hover:bg-white/40 hover:border-[#FAB12F]/50 hover:shadow-lg hover:shadow-[#FAB12F]/10 transition-all duration-300 group text-left relative overflow-hidden backdrop-blur-md cursor-pointer"
                                 >
                                     <div className="absolute inset-0 bg-[#FAB12F]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                                     <div className="w-12 h-12 bg-white/30 rounded-2xl flex items-center justify-center text-gray-400 group-hover:text-[#FA812F] group-hover:bg-[#FEF3E2] transition-all duration-300 relative z-10 shadow-sm">

@@ -183,7 +183,7 @@ export default function RecipesPage() {
                                     router.back();
                                 }
                             }}
-                            className="p-3 rounded-full bg-white/50 hover:bg-white text-gray-600 hover:text-[#FAB12F] transition-all duration-300 shadow-sm border border-white/50 group"
+                            className="p-3 rounded-full bg-white/50 hover:bg-white text-gray-600 hover:text-[#FAB12F] transition-all duration-300 shadow-sm border border-white/50 group cursor-pointer"
                         >
                             <svg className="w-5 h-5 transform group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -217,7 +217,7 @@ export default function RecipesPage() {
                                 <button
                                     type="submit"
                                     disabled={loading}
-                                    className="p-3 bg-[#FAB12F] text-white rounded-2xl font-bold shadow-lg shadow-[#FAB12F]/20 hover:bg-[#FA812F] transition-all duration-300 disabled:opacity-70"
+                                    className="p-3 bg-[#FAB12F] text-white rounded-2xl font-bold shadow-lg shadow-[#FAB12F]/20 hover:bg-[#FA812F] transition-all duration-300 disabled:opacity-70 cursor-pointer"
                                 >
                                     {loading ? (
                                         <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
@@ -233,7 +233,7 @@ export default function RecipesPage() {
                         <button
                             onClick={loadRandomRecipes}
                             disabled={loading}
-                            className="px-5 bg-white/60 backdrop-blur-xl hover:bg-white text-gray-600 hover:text-[#FAB12F] rounded-3xl border border-white/50 shadow-sm hover:shadow-md transition-all duration-300 group flex items-center justify-center"
+                            className="px-5 bg-white/60 backdrop-blur-xl hover:bg-white text-gray-600 hover:text-[#FAB12F] rounded-3xl border border-white/50 shadow-sm hover:shadow-md transition-all duration-300 group flex items-center justify-center cursor-pointer"
                             title="Refresh Recommendations"
                         >
                             <svg className={`w-6 h-6 transform group-hover:rotate-180 transition-transform duration-500 ${loading ? 'animate-spin' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -452,7 +452,7 @@ export default function RecipesPage() {
                             <p className="text-white/80 text-sm font-medium relative z-10">{selectedRecipe.strMeal}</p>
                             <button
                                 onClick={() => setShowLogModal(false)}
-                                className="absolute top-4 right-4 p-2 bg-white/20 hover:bg-white/30 rounded-full transition-colors"
+                                className="absolute top-4 right-4 p-2 bg-white/20 hover:bg-white/30 rounded-full transition-colors cursor-pointer"
                             >
                                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
                             </button>

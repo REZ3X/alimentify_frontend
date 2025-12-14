@@ -92,7 +92,7 @@ export default function MealModal({
                         </div>
                         <button
                             onClick={onClose}
-                            className="w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-500 transition-colors"
+                            className="w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-500 transition-colors cursor-pointer"
                         >
                             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
                         </button>
@@ -110,7 +110,7 @@ export default function MealModal({
                                             key={type}
                                             type="button"
                                             onClick={() => handleInputChange({ target: { name: 'meal_type', value: type } })}
-                                            className={`py-3 rounded-xl text-sm font-bold transition-all flex items-center justify-center gap-2 ${formData.meal_type === type
+                                            className={`py-3 rounded-xl text-sm font-bold transition-all flex items-center justify-center gap-2 cursor-pointer ${formData.meal_type === type
                                                     ? 'bg-[#FAB12F] text-white shadow-md transform scale-105'
                                                     : 'bg-gray-50 text-gray-600 hover:bg-gray-100'
                                                 }`}
@@ -164,7 +164,7 @@ export default function MealModal({
                                 type="button"
                                 onClick={handleAnalyze}
                                 disabled={analyzing || !formData.food_name}
-                                className="w-full py-4 bg-linear-to-r from-[#FAB12F] to-[#FA812F] text-white rounded-2xl font-bold shadow-lg shadow-orange-200 hover:shadow-orange-300 hover:scale-[1.02] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
+                                className="w-full py-4 bg-linear-to-r from-[#FAB12F] to-[#FA812F] text-white rounded-2xl font-bold shadow-lg shadow-orange-200 hover:shadow-orange-300 hover:scale-[1.02] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 cursor-pointer"
                             >
                                 {analyzing ? (
                                     <>
@@ -186,7 +186,7 @@ export default function MealModal({
                             <button
                                 type="button"
                                 onClick={() => setShowManualEntry(true)}
-                                className="w-full text-sm text-gray-500 hover:text-gray-800 font-medium underline decoration-gray-300 underline-offset-4"
+                                className="w-full text-sm text-gray-500 hover:text-gray-800 font-medium underline decoration-gray-300 underline-offset-4 cursor-pointer"
                             >
                                 Enter details manually instead
                             </button>
@@ -268,13 +268,13 @@ export default function MealModal({
                                     <button
                                         type="button"
                                         onClick={onClose}
-                                        className="flex-1 py-3.5 bg-gray-100 text-gray-600 rounded-2xl font-bold hover:bg-gray-200 transition-colors"
+                                        className="flex-1 py-3.5 bg-gray-100 text-gray-600 rounded-2xl font-bold hover:bg-gray-200 transition-colors cursor-pointer"
                                     >
                                         Cancel
                                     </button>
                                     <button
                                         type="submit"
-                                        className="flex-1 py-3.5 bg-[#FAB12F] text-white rounded-2xl font-bold hover:bg-[#FA812F] shadow-lg shadow-orange-200 transition-all"
+                                        className="flex-1 py-3.5 bg-[#FAB12F] text-white rounded-2xl font-bold hover:bg-[#FA812F] shadow-lg shadow-orange-200 transition-all cursor-pointer"
                                     >
                                         {isEditing ? 'Save Changes' : 'Log Meal'}
                                     </button>

@@ -13,7 +13,7 @@ export default function DateSelector({ viewMode, setViewMode, selectedDate, setS
                         <button
                             key={mode.value}
                             onClick={() => setViewMode(mode.value)}
-                            className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 whitespace-nowrap flex-1 lg:flex-none ${
+                            className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 whitespace-nowrap flex-1 lg:flex-none cursor-pointer ${
                                 viewMode === mode.value
                                     ? 'bg-white text-[#FAB12F] shadow-sm'
                                     : 'text-gray-500 hover:text-gray-700 hover:bg-white/50'
@@ -39,7 +39,7 @@ export default function DateSelector({ viewMode, setViewMode, selectedDate, setS
                     {viewMode === 'daily' && (
                         <button
                             onClick={onAddMeal}
-                            className="px-6 py-3 bg-[#FAB12F] hover:bg-[#FA812F] text-white rounded-2xl font-bold shadow-lg shadow-[#FAB12F]/20 hover:shadow-[#FAB12F]/40 transition-all duration-300 flex items-center justify-center gap-2 group"
+                            className="px-6 py-3 bg-[#FAB12F] hover:bg-[#FA812F] text-white rounded-2xl font-bold shadow-lg shadow-[#FAB12F]/20 hover:shadow-[#FAB12F]/40 transition-all duration-300 flex items-center justify-center gap-2 group cursor-pointer"
                         >
                             <span className="text-xl leading-none group-hover:rotate-90 transition-transform duration-300">+</span>
                             <span>Log Meal</span>

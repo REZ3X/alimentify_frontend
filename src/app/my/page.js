@@ -131,7 +131,7 @@ function DashboardContent() {
                             </h2>
                             <Link
                                 href="/my/profile-edit"
-                                className="inline-flex items-center gap-2 px-5 py-2.5 bg-white hover:bg-[#FAB12F] text-gray-700 hover:text-white font-bold rounded-xl transition-all shadow-sm hover:shadow-md border border-gray-100 group"
+                                className="inline-flex items-center gap-2 px-5 py-2.5 bg-white hover:bg-[#FAB12F] text-gray-700 hover:text-white font-bold rounded-xl transition-all shadow-sm hover:shadow-md border border-gray-100 group cursor-pointer"
                             >
                                 <svg className="w-5 h-5 text-[#FAB12F] group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -311,7 +311,7 @@ function DashboardContent() {
                             <Link
                                 key={idx}
                                 href={action.href}
-                                className={`group bg-white/80 backdrop-blur-xl border border-white/50 rounded-4xl p-6 hover:shadow-[0_8px_30px_rgb(0,0,0,0.06)] hover:border-[#FAB12F]/50 transition-all duration-300 relative overflow-hidden ${action.className || ''} ${action.isLarge ? 'flex flex-col justify-between' : 'flex items-center gap-6'}`}
+                                className={`group bg-white/80 backdrop-blur-xl border border-white/50 rounded-4xl p-6 hover:shadow-[0_8px_30px_rgb(0,0,0,0.06)] hover:border-[#FAB12F]/50 transition-all duration-300 relative overflow-hidden cursor-pointer ${action.className || ''} ${action.isLarge ? 'flex flex-col justify-between' : 'flex items-center gap-6'}`}
                             >
                                 {/* Decorative background for all cards on hover */}
                                 <div className={`absolute -right-4 -bottom-4 w-32 h-32 ${action.color.split(' ')[0]} rounded-full blur-3xl opacity-0 group-hover:opacity-20 transition-opacity duration-500`}></div>
